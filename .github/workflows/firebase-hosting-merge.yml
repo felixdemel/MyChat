@@ -13,4 +13,4 @@ jobs:
           repoToken: '${{ secrets.GITHUB_TOKEN }}'
           firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT_DEIN_PROJEKT }}'
           channelId: live
-          projectId: 1:733607932310:web:f7fd38b9729e932446edb7
+          projectId: mychat-c9068
