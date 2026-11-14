@@ -1,0 +1,3648 @@
+<!DOCTYPE html>
+<html lang="de">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MyChat</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f3f6fb;
+            padding-bottom: 82px;
+        }
+
+        .login-container {
+            max-width: 420px;
+            margin: 80px auto;
+            padding: 30px;
+            background: white;
+            border: 1px solid #dfe6f1;
+            border-radius: 12px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+        }
+
+        .login-container h1 {
+            margin-top: 0;
+            text-align: center;
+        }
+
+        .login-container label,
+        .login-container input,
+        .login-container button {
+            display: block;
+            width: 100%;
+        }
+
+        .login-container label {
+            margin-top: 16px;
+            margin-bottom: 6px;
+            font-weight: bold;
+        }
+
+        .login-container input {
+            padding: 12px 10px;
+            border: 1px solid #c4d1e1;
+            border-radius: 8px;
+        }
+
+        .login-container button {
+            margin-top: 20px;
+            padding: 12px;
+            border: 0;
+            border-radius: 8px;
+            background: #176b87;
+            color: white;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        .secondary-button {
+            background: #eef5fb !important;
+            color: #176b87 !important;
+            border: 1px solid #c4d1e1 !important;
+        }
+
+        .login-message {
+            color: #b00020;
+            min-height: 20px;
+            margin-top: 12px;
+        }
+
+        .register-form {
+            margin-top: 28px;
+            padding-top: 24px;
+            border-top: 1px solid #dfe6f1;
+        }
+
+        [hidden] {
+            display: none !important;
+        }
+
+        .welcome-message {
+            padding: 18px 20px;
+            background: #176b87;
+            color: white;
+            text-align: center;
+        }
+
+        .app-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            min-height: 76px;
+            padding: 12px clamp(16px, 4vw, 56px);
+            background: #075e54;
+            color: white;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+        }
+
+        .app-header-brand {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .app-header-brand strong {
+            font-size: 24px;
+            letter-spacing: 0.2px;
+        }
+
+        .app-header-brand p {
+            margin: 0;
+            color: #d7f5e8;
+            font-size: 14px;
+        }
+
+        .app-header-actions {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logout-button {
+            padding: 9px 14px;
+            color: #075e54;
+            background: #e8f5e9;
+            border: 0;
+            border-radius: 20px;
+            cursor: pointer;
+        }
+
+        .profile-button {
+            width: 40px;
+            height: 40px;
+            border: 0;
+            border-radius: 50%;
+            background: #128c7e;
+            color: #fff;
+            cursor: pointer;
+            font-size: 20px;
+        }
+
+        .profile-panel {
+            position: fixed;
+            top: 68px;
+            right: 16px;
+            z-index: 9;
+            width: min(360px, calc(100% - 32px));
+            padding: 20px;
+            background: white;
+            border: 1px solid #dfe6f1;
+            border-radius: 10px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.14);
+        }
+
+        .profile-panel label,
+        .profile-panel input,
+        .profile-panel button {
+            display: block;
+            width: 100%;
+        }
+
+        .profile-panel label {
+            margin-top: 12px;
+            margin-bottom: 6px;
+            font-weight: 600;
+        }
+
+        .profile-panel input {
+            padding: 10px;
+            border: 1px solid #c4d1e1;
+            border-radius: 8px;
+        }
+
+        .profile-panel button {
+            margin-top: 14px;
+            padding: 10px;
+            border: 0;
+            border-radius: 8px;
+            background: #176b87;
+            color: white;
+            cursor: pointer;
+        }
+
+        .profile-panel .profile-close-button {
+            background: #eef5fb;
+            color: #176b87;
+            border: 1px solid #c4d1e1;
+        }
+
+        .delete-account-section {
+            margin-top: 20px;
+            padding-top: 16px;
+            border-top: 1px solid #dfe6f1;
+        }
+
+        .delete-account-section input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #c4d1e1;
+            border-radius: 8px;
+        }
+
+        .delete-account-section ul {
+            list-style: none;
+            padding: 0;
+            margin: 10px 0 0;
+        }
+
+        .account-management-note {
+            display: block;
+            margin-top: 6px;
+            color: #687887;
+            font-size: 12px;
+        }
+
+        .delete-account-button {
+            background: #b00020 !important;
+        }
+
+        .restore-account-button {
+            background: #176b87 !important;
+        }
+
+        .create-account-button {
+            background: #238636 !important;
+        }
+
+        .new-account-suggestion {
+            color: #176b2c;
+            background: #e5f6e9 !important;
+        }
+
+        .deleted-account {
+            color: #b00020;
+            background: #ffe8ed !important;
+        }
+
+        .profile-message {
+            min-height: 20px;
+            color: #b00020;
+        }
+
+        .chat-shell {
+            display: grid;
+            grid-template-columns: minmax(270px, 340px) minmax(0, 1fr);
+            max-width: 1500px;
+            margin: 20px auto;
+            gap: 0;
+            padding: 0 20px 20px;
+            height: min(780px, calc(100vh - 142px));
+            min-height: 480px;
+        }
+
+        .social-page {
+            max-width: 960px;
+            min-height: 420px;
+            margin: 24px auto;
+            padding: 24px;
+            background: white;
+            border: 1px solid #dfe6f1;
+            border-radius: 12px;
+        }
+
+        .social-page h2 {
+            margin-top: 0;
+        }
+
+        .social-search-label {
+            display: block;
+            margin: 18px 0 7px;
+            font-weight: 600;
+        }
+
+        .social-search {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #d5dedb;
+            border-radius: 22px;
+            background: #f6f8f7;
+            font: inherit;
+        }
+
+        .social-note,
+        .social-status {
+            color: #58708a;
+            font-size: 14px;
+        }
+
+        .social-form {
+            display: grid;
+            gap: 10px;
+            margin: 18px 0 24px;
+            padding: 16px;
+            background: #f4f7fb;
+            border-radius: 10px;
+        }
+
+        .social-form input,
+        .social-form textarea,
+        .social-form button {
+            width: 100%;
+            padding: 11px;
+            border: 1px solid #c4d1e1;
+            border-radius: 8px;
+            font: inherit;
+        }
+
+        .social-form textarea {
+            min-height: 90px;
+            resize: vertical;
+        }
+
+        .social-form button {
+            border: 0;
+            background: #176b87;
+            color: white;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .social-feed {
+            display: grid;
+            gap: 16px;
+        }
+
+        .social-post {
+            padding: 16px;
+            border: 1px solid #dfe6f1;
+            border-radius: 10px;
+        }
+
+        .social-post-header {
+            display: flex;
+            justify-content: space-between;
+            gap: 12px;
+            margin-bottom: 10px;
+        }
+
+        .social-post-header small {
+            color: #58708a;
+        }
+
+        .social-post p {
+            margin: 8px 0;
+            white-space: pre-wrap;
+            overflow-wrap: anywhere;
+        }
+
+        .social-post video,
+        .social-post img {
+            display: block;
+            width: 100%;
+            max-height: 520px;
+            margin-top: 12px;
+            border-radius: 8px;
+            background: #111;
+            object-fit: contain;
+        }
+
+        .social-delete-button {
+            padding: 5px 8px;
+            border: 1px solid #c4d1e1;
+            border-radius: 6px;
+            background: white;
+            color: #687887;
+            cursor: pointer;
+        }
+
+        .social-navigation {
+            position: fixed;
+            right: 0;
+            bottom: 0;
+            left: 0;
+            z-index: 8;
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            padding: 10px 16px calc(10px + env(safe-area-inset-bottom));
+            background: white;
+            border-top: 1px solid #dfe6f1;
+            box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.06);
+        }
+
+        .social-navigation button {
+            min-width: 110px;
+            padding: 10px 16px;
+            border: 0;
+            border-radius: 8px;
+            background: #eef5fb;
+            color: #176b87;
+            cursor: pointer;
+            font: inherit;
+            font-weight: 600;
+        }
+
+        .social-navigation button[aria-current="page"] {
+            background: #176b87;
+            color: white;
+        }
+
+        .sidebar,
+        .server-sidebar {
+            width: 260px;
+            flex: 0 0 260px;
+            background: white;
+            border: 1px solid #dfe6f1;
+            border-radius: 12px;
+            padding: 20px;
+            height: 100%;
+            min-height: 0;
+            overflow: hidden;
+        }
+
+        .server-sidebar {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .server-visibility {
+            display: flex;
+            gap: 12px;
+            margin: 12px 0;
+        }
+
+        .server-visibility label {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .server-create-panel {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            z-index: 20;
+            width: min(360px, calc(100% - 32px));
+            padding: 20px;
+            background: white;
+            border: 1px solid #dfe6f1;
+            border-radius: 10px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.18);
+            transform: translate(-50%, -50%);
+        }
+
+        .server-create-panel input,
+        .server-create-panel button {
+            width: 100%;
+            margin-top: 10px;
+            padding: 10px;
+            border: 1px solid #c4d1e1;
+            border-radius: 8px;
+        }
+
+        .server-create-panel button {
+            border: 0;
+            background: #176b87;
+            color: white;
+            cursor: pointer;
+        }
+
+        .server-create-panel .server-create-cancel {
+            background: #eef5fb;
+            color: #176b87;
+            border: 1px solid #c4d1e1;
+        }
+
+        .sidebar h3,
+        .server-sidebar h3 {
+            margin-top: 0;
+            margin-bottom: 16px;
+        }
+
+        .status-section + .status-section {
+            margin-top: 28px;
+        }
+
+        .user-search {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #c4d1e1;
+            border-radius: 8px;
+            margin-bottom: 12px;
+        }
+
+        .sidebar ul,
+        .server-sidebar ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .sidebar li,
+        .server-sidebar li {
+            background: #eef5fb;
+            border-radius: 8px;
+            padding: 10px 12px;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+
+        .add-server-button {
+            width: 100%;
+            margin-top: auto;
+            padding: 10px;
+            border: 1px solid #c4d1e1;
+            border-radius: 8px;
+            background: white;
+            color: #176b87;
+            cursor: pointer;
+            font-size: 20px;
+            font-weight: 700;
+        }
+
+        .add-server-button:hover {
+            background: #eef5fb;
+        }
+
+        .server-delete-button {
+            float: right;
+            margin-right: 4px;
+            padding: 2px 3px;
+            border: 1px solid #c4d1e1;
+            border-radius: 3px;
+            background: white;
+            color: #687887;
+            cursor: pointer;
+            font-size: 10px;
+        }
+
+        #chat-users {
+            max-height: 158px;
+            overflow-y: auto;
+        }
+
+        .user-item {
+            cursor: pointer;
+        }
+
+        .user-item:hover {
+            background: #dff3ff;
+        }
+
+        .chat-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .chat-header h2 {
+            margin: 0;
+        }
+
+        .clear-messages-button {
+            padding: 9px 12px;
+            border: 1px solid #c4d1e1;
+            border-radius: 8px;
+            background: white;
+            color: #687887;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .report-chat-button {
+            padding: 9px 12px;
+            border: 1px solid #c4d1e1;
+            border-radius: 8px;
+            background: white;
+            color: #687887;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .report-account-button {
+            padding: 7px 9px;
+            border: 1px solid #c4d1e1;
+            border-radius: 6px;
+            background: white;
+            color: #687887;
+            cursor: pointer;
+            font-size: 12px;
+        }
+
+        .reports-sidebar {
+            width: 230px;
+            flex: 0 0 230px;
+            padding: 20px;
+            background: white;
+            border: 1px solid #dfe6f1;
+            border-radius: 12px;
+            height: 100%;
+            overflow-y: auto;
+        }
+
+        .reports-sidebar h3 {
+            margin-top: 0;
+        }
+
+        .report-item {
+            margin-bottom: 8px;
+            padding: 10px;
+            background: #fff4e5;
+            border-radius: 8px;
+        }
+
+        .report-item button {
+            width: 100%;
+            margin-top: 7px;
+            padding: 6px;
+            border: 0;
+            border-radius: 5px;
+            background: #176b87;
+            color: white;
+            cursor: pointer;
+        }
+
+        .status-button {
+            width: 100%;
+            padding: 9px 10px;
+            border: 1px solid #c4d1e1;
+            border-radius: 8px;
+            background: white;
+            color: #176b87;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .status-button:hover {
+            background: #eef5fb;
+        }
+
+        .status-button + .status-button {
+            margin-top: 8px;
+        }
+
+        .chat-window {
+            flex: 1;
+            background: white;
+            border: 1px solid #dfe6f1;
+            border-radius: 12px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            min-height: 0;
+            overflow: hidden;
+        }
+
+        #chat-messages {
+            min-height: 0;
+            flex: 1;
+            overflow-y: auto;
+            padding-right: 8px;
+            margin-bottom: 20px;
+        }
+
+        .message {
+            max-width: 75%;
+            background: #f4f7fb;
+            border-radius: 12px;
+            padding: 12px 14px;
+            margin-bottom: 12px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
+        }
+
+        .message.me {
+            margin-left: auto;
+            background: #dff3ff;
+        }
+
+        .message.system-rules {
+            max-width: 100%;
+            background: #eef5fb;
+            border-left: 4px solid #176b87;
+        }
+
+        .message.system-rules div {
+            white-space: pre-line;
+        }
+
+        .message.system-presence {
+            max-width: 60%;
+            margin: 0 auto 6px;
+            padding: 3px 7px;
+            background: #f4f7fb;
+            color: #687887;
+            box-shadow: none;
+            font-size: 10px;
+            text-align: center;
+        }
+
+        .message.system-presence strong {
+            display: inline;
+            margin-right: 3px;
+            font-size: 9px;
+        }
+
+        .message.new-message-notice {
+            max-width: 100%;
+            background: #e5f6e9;
+            border-left: 4px solid #238636;
+            color: #176b2c;
+            cursor: pointer;
+        }
+
+        .new-message-notice button {
+            margin-top: 8px;
+            padding: 6px 10px;
+            border: 1px solid #238636;
+            border-radius: 6px;
+            background: white;
+            color: #176b2c;
+            cursor: pointer;
+        }
+
+        .message strong {
+            display: block;
+            margin-bottom: 4px;
+        }
+
+        .message small {
+            display: block;
+            margin-top: 8px;
+            color: #58708a;
+        }
+
+        .mention {
+            color: #176bce;
+            font-weight: 700;
+        }
+
+        .message-actions {
+            display: flex;
+            justify-content: flex-end;
+            margin-top: 10px;
+        }
+
+        .message-delete-button {
+            padding: 2px 4px;
+            border: 0;
+            border-radius: 3px;
+            background: #d7e1e8;
+            color: #687887;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .message.deleted {
+            color: #687887;
+            font-style: italic;
+        }
+
+        .deleted-original-text {
+            margin-top: 6px;
+            color: #17212b;
+            font-style: normal;
+        }
+
+        #chat-form {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            align-items: center;
+        }
+
+        #chat-form .chat-attachment-status {
+            flex-basis: 100%;
+            margin: 0;
+            color: #b00020;
+            font-size: 13px;
+        }
+
+        #chat-input {
+            flex: 1;
+            padding: 12px;
+            border: 1px solid #c4d1e1;
+            border-radius: 8px;
+        }
+
+        #chat-form button {
+            padding: 12px 20px;
+            border: 0;
+            border-radius: 8px;
+            background: #176b87;
+            color: white;
+            cursor: pointer;
+        }
+
+        @media (max-width: 760px) {
+            .chat-shell {
+                height: calc(100dvh - 150px);
+                min-height: 420px;
+                grid-template-columns: minmax(0, 1fr);
+                padding: 0 8px 10px;
+            }
+
+            .server-sidebar,
+            .reports-sidebar {
+                width: 100%;
+                flex: none;
+                height: auto;
+                max-height: 160px;
+            }
+
+            .sidebar {
+                display: none;
+            }
+
+            .chat-shell.chat-list-open .sidebar {
+                display: block;
+            }
+
+            .chat-shell.chat-list-open .chat-window {
+                display: none;
+            }
+
+            .chat-window {
+                min-height: 0;
+            }
+
+            .social-page {
+                min-height: calc(100dvh - 160px);
+                margin: 12px 8px;
+                padding: 16px;
+            }
+
+            .social-navigation {
+                gap: 0;
+                padding: 5px 8px calc(5px + env(safe-area-inset-bottom));
+            }
+
+            .social-navigation button {
+                min-width: 0;
+                flex: 1;
+                padding: 10px 6px;
+            }
+
+            .app-header {
+                min-height: 64px;
+                padding: 8px 12px;
+            }
+
+            .app-header-brand {
+                gap: 8px;
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .app-header-brand strong {
+                font-size: 20px;
+            }
+
+            .app-header-brand p {
+                font-size: 12px;
+            }
+
+            .logout-button {
+                padding: 8px 10px;
+                font-size: 12px;
+            }
+        }
+
+        body {
+            padding-bottom: 76px;
+            background: #e9edef;
+            color: #111b21;
+        }
+
+        .login-container,
+        .profile-panel,
+        .social-page,
+        .sidebar,
+        .server-sidebar,
+        .chat-window,
+        .reports-sidebar {
+            border-color: #d7e2dc;
+        }
+
+        .login-container {
+            border-radius: 16px;
+        }
+
+        .login-container h1 {
+            color: #075e54;
+        }
+
+        .login-container button:not(.secondary-button),
+        .profile-panel button:not(.profile-close-button),
+        .server-create-panel button:not(.server-create-cancel),
+        .status-button,
+        #chat-form button,
+        .report-item button {
+            background: #128c7e;
+        }
+
+        .secondary-button,
+        .profile-panel .profile-close-button,
+        .server-create-panel .server-create-cancel {
+            color: #075e54 !important;
+            background: #edf7f1 !important;
+            border-color: #cfe5d6 !important;
+        }
+
+        .welcome-message {
+            padding: 0;
+            background: none;
+            color: inherit;
+        }
+
+        .chat-shell {
+            overflow: hidden;
+            border: 1px solid #d5dedb;
+            border-radius: 12px;
+            background: #fff;
+            box-shadow: 0 3px 14px rgba(17, 27, 33, 0.08);
+        }
+
+        .sidebar {
+            width: auto;
+            flex: none;
+            border: 0;
+            border-right: 1px solid #d5dedb;
+            border-radius: 0;
+            padding: 14px;
+            overflow-y: auto;
+        }
+
+        .server-sidebar {
+            display: none;
+        }
+
+        .sidebar h3,
+        .server-sidebar h3 {
+            margin-bottom: 10px;
+            color: #075e54;
+            font-size: 16px;
+        }
+
+        .status-section + .status-section {
+            margin-top: 20px;
+            padding-top: 16px;
+            border-top: 1px solid #edf0ef;
+        }
+
+        .chat-list-heading {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+        }
+
+        .chat-list-heading h3 {
+            margin: 0;
+        }
+
+        .chat-list-actions {
+            display: flex;
+            gap: 6px;
+        }
+
+        .chat-list-action {
+            width: 34px;
+            height: 34px;
+            padding: 0;
+            border: 0;
+            border-radius: 50%;
+            background: #d9fdd3;
+            color: #075e54;
+            cursor: pointer;
+            font-size: 20px;
+        }
+
+        .chat-list-search {
+            width: 100%;
+            margin: 12px 0 4px;
+            padding: 10px 12px;
+            border: 1px solid #d5dedb;
+            border-radius: 20px;
+            background: #f6f8f7;
+        }
+
+        .sidebar li,
+        .server-sidebar li {
+            padding: 12px;
+            border-radius: 8px;
+            background: #fff;
+            border-bottom: 1px solid #edf0ef;
+            font-weight: 500;
+        }
+
+        .chat-list-preview {
+            display: block;
+            margin-top: 5px;
+            overflow: hidden;
+            color: #667781;
+        }
+
+        .social-author-link {
+            padding: 0;
+            border: 0;
+            background: transparent;
+            color: #075e54;
+            cursor: pointer;
+            font: inherit;
+            font-weight: 700;
+            text-align: left;
+        }
+
+        .social-author-link:hover {
+            text-decoration: underline;
+        }
+
+        .account-profile {
+            margin-bottom: 20px;
+            padding: 18px;
+            border: 1px solid #d5dedb;
+            border-radius: 12px;
+            background: #f3f8f5;
+        }
+
+        .account-profile-header {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+        }
+
+        .account-description {
+            margin: 10px 0 0;
+            white-space: pre-wrap;
+            overflow-wrap: anywhere;
+        }
+
+        .account-subscribe-button,
+        .social-delete-button {
+            padding: 8px 14px;
+            border: 0;
+            border-radius: 20px;
+            background: #128c7e;
+            color: #fff;
+            cursor: pointer;
+            font: inherit;
+            font-weight: 600;
+        }
+
+        .account-subscribe-button.subscribed {
+            background: #e4efea;
+            color: #075e54;
+        }
+
+        .social-delete-button {
+            flex: 0 0 auto;
+            padding: 6px 12px;
+            background: #fff0f0;
+            color: #a32121;
+        }
+
+        .feed-filter-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin: 12px 0 20px;
+        }
+
+        .feed-filter-button {
+            padding: 8px 13px;
+            border: 1px solid #d5dedb;
+            border-radius: 20px;
+            background: #fff;
+            color: #075e54;
+            cursor: pointer;
+            font: inherit;
+        }
+
+        .feed-filter-button[aria-pressed="true"] {
+            border-color: #128c7e;
+            background: #d9fdd3;
+            font-weight: 700;
+        }
+
+        .feed-filter-more {
+            color: #128c7e;
+            font-weight: 700;
+        }
+
+        .chat-account-link {
+            padding: 0;
+            border: 0;
+            background: transparent;
+            color: inherit;
+            cursor: pointer;
+            font: inherit;
+            font-weight: 700;
+            font-size: 13px;
+            font-weight: 400;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .unread-count {
+            display: inline-flex;
+            min-width: 22px;
+            height: 22px;
+            align-items: center;
+            justify-content: center;
+            margin-left: 8px;
+            padding: 0 6px;
+            border-radius: 12px;
+            background: #25d366;
+            color: #075e54;
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .message-attachment {
+            display: block;
+            max-width: min(100%, 520px);
+            margin-top: 10px;
+        }
+
+        .message-attachment img,
+        .message-attachment video {
+            display: block;
+            max-width: 100%;
+            max-height: 420px;
+            border-radius: 8px;
+            background: #111;
+        }
+
+        .message-attachment a {
+            color: #075e54;
+            font-weight: 600;
+            overflow-wrap: anywhere;
+        }
+
+        .chat-attachment-picker {
+            display: flex;
+            flex: 0 0 auto;
+            align-items: center;
+            justify-content: center;
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            background: #d9fdd3;
+            color: #075e54;
+            cursor: pointer;
+            font-size: 22px;
+        }
+
+        .chat-attachment-picker input {
+            display: none;
+        }
+
+        .chat-attachment-status {
+            grid-column: 1 / -1;
+            margin: 0;
+            color: #b00020;
+            font-size: 13px;
+        }
+
+        .join-group-button {
+            float: right;
+            padding: 6px 10px;
+            border: 0;
+            border-radius: 16px;
+            background: #128c7e;
+            color: white;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .chat-empty-state {
+            margin: auto;
+            padding: 24px;
+            color: #52636a;
+            text-align: center;
+        }
+
+        .sidebar li:hover,
+        .server-sidebar li:hover,
+        .user-item:hover {
+            background: #f0f7f4;
+        }
+
+        .user-search,
+        .login-container input,
+        .profile-panel input,
+        .delete-account-section input {
+            border-color: #d5dedb;
+            border-radius: 8px;
+            background: #f6f8f7;
+        }
+
+        .chat-window {
+            border: 0;
+            border-radius: 0;
+            padding: 18px;
+            background-color: #efeae2;
+            background-image: radial-gradient(rgba(7, 94, 84, 0.045) 1px, transparent 1px);
+            background-size: 20px 20px;
+        }
+
+        .chat-header {
+            flex: 0 0 auto;
+            margin: -18px -18px 14px;
+            padding: 14px 18px;
+            background: #f7f9f8;
+            border-bottom: 1px solid #e0e6e3;
+        }
+
+        .chat-header h2 {
+            color: #075e54;
+            font-size: 18px;
+        }
+
+        .chat-back-button {
+            display: none;
+            flex: 0 0 auto;
+            padding: 0 8px;
+            border: 0;
+            background: transparent;
+            color: #128c7e;
+            cursor: pointer;
+            font-size: 28px;
+            line-height: 1;
+        }
+
+        .chat-header {
+            flex-wrap: wrap;
+        }
+
+        #chat-messages {
+            padding: 10px;
+        }
+
+        .message {
+            border-radius: 4px 12px 12px;
+            background: #fff;
+        }
+
+        .message.me {
+            background: #d9fdd3;
+        }
+
+        .message.system-rules {
+            background: #fff;
+            border-left-color: #128c7e;
+        }
+
+        #chat-form {
+            margin: 0 -4px -4px;
+            padding: 10px;
+            background: #f7f9f8;
+            border-radius: 10px;
+        }
+
+        #chat-input {
+            border-color: #d5dedb;
+            border-radius: 22px;
+            background: white;
+        }
+
+        .social-page {
+            max-width: 900px;
+            margin: 20px auto;
+            border-radius: 12px;
+            box-shadow: 0 3px 14px rgba(17, 27, 33, 0.06);
+        }
+
+        .social-page h2 {
+            color: #075e54;
+        }
+
+        .social-form {
+            background: #f3f8f5;
+        }
+
+        .social-form input,
+        .social-form textarea {
+            border-color: #d5dedb;
+            background: white;
+        }
+
+        .social-form button {
+            background: #128c7e;
+        }
+
+        .social-post {
+            border-color: #e2e8e5;
+            border-radius: 12px;
+        }
+
+        .social-navigation {
+            justify-content: stretch;
+            gap: 0;
+            padding: 6px 12px calc(6px + env(safe-area-inset-bottom));
+            border-color: #d5dedb;
+        }
+
+        .social-navigation button {
+            min-width: 0;
+            flex: 1;
+            max-width: 260px;
+            border-radius: 0;
+            background: white;
+            color: #667781;
+            border-top: 3px solid transparent;
+        }
+
+        .social-navigation button[aria-current="page"] {
+            background: #f3f8f5;
+            color: #075e54;
+            border-top-color: #128c7e;
+        }
+
+        .social-navigation {
+            position: fixed;
+            right: 0;
+            bottom: 0;
+            left: 0;
+            z-index: 20;
+            background: #fff;
+        }
+
+        .reports-sidebar {
+            position: fixed;
+            top: 90px;
+            right: 12px;
+            z-index: 11;
+            width: min(300px, calc(100vw - 24px));
+            height: auto;
+            max-height: calc(100vh - 180px);
+            box-shadow: 0 8px 24px rgba(17, 27, 33, 0.14);
+        }
+
+        @media (max-width: 760px) {
+            .chat-back-button {
+                display: block;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <section class="login-container" id="login-container">
+        <h1>MyChat</h1>
+        <p>Bitte melde dich an, um den Chat zu sehen.</p>
+
+        <form id="login-form">
+            <label for="user-name">Dein Name:</label>
+            <input type="text" id="user-name" name="user-name" maxlength="20" required>
+
+            <label for="pin">PIN:</label>
+            <input type="password" id="pin" name="pin" autocomplete="current-password" required>
+
+            <button type="submit">Einloggen</button>
+            <p class="login-message" id="login-message" aria-live="polite"></p>
+        </form>
+
+        <button class="secondary-button" id="show-register-button" type="button">Registrieren</button>
+
+        <form class="register-form" id="register-form" hidden>
+            <h2>Neuen Account erstellen</h2>
+            <p>Der Registrierungscode ist <strong>000</strong>. Danach ist dein Benutzername auch deine PIN. Dein Passwort kannst du später jederzeit im Profil ändern.</p>
+
+            <label for="register-name">Gewünschter Benutzername:</label>
+            <input type="text" id="register-name" name="register-name" maxlength="20" required>
+
+            <label for="register-password">Registrierungscode:</label>
+            <input type="password" id="register-password" name="register-password" inputmode="numeric" maxlength="3" required>
+
+            <button type="submit">Account erstellen</button>
+            <button class="secondary-button" id="show-login-button" type="button">Zurück zum Login</button>
+            <p class="login-message" id="register-message" aria-live="polite"></p>
+        </form>
+    </section>
+
+    <div id="website-content" hidden>
+        <header class="app-header">
+            <div class="app-header-brand">
+                <strong>MyChat</strong>
+                <p id="welcome-user">Hallo!</p>
+            </div>
+            <div class="app-header-actions">
+                <button class="profile-button" id="profile-button" type="button" aria-label="Profil öffnen" title="Profil öffnen">&#128100;</button>
+                <button class="logout-button" id="logout-button" type="button">Abmelden</button>
+            </div>
+        </header>
+
+        <section class="profile-panel" id="profile-panel" hidden>
+            <h2>Mein Profil</h2>
+            <form id="profile-form">
+                <label for="profile-name">Benutzername</label>
+                <input type="text" id="profile-name" maxlength="20" required>
+
+                <label for="profile-password">Neues Passwort</label>
+                <input type="password" id="profile-password" required>
+
+                <button id="profile-save-button" type="submit">Änderungen speichern</button>
+                <button class="profile-close-button" id="profile-close-button" type="button">Schließen</button>
+                <p class="profile-message" id="profile-message" aria-live="polite"></p>
+            </form>
+
+            <div class="delete-account-section" id="delete-account-section" hidden>
+                <h3>Accounts verwalten</h3>
+                <label for="account-to-delete-search">Account suchen</label>
+                <small class="account-management-note">Rot markierte Accounts können wiederhergestellt werden.</small>
+                <input id="account-to-delete-search" type="search" placeholder="Benutzername suchen..." autocomplete="off">
+                <ul id="account-delete-suggestions"></ul>
+                <button class="delete-account-button" id="delete-account-button" type="button">Account löschen</button>
+                <button class="restore-account-button" id="restore-account-button" type="button" hidden>Account wiederherstellen</button>
+                <button class="create-account-button" id="create-account-button" type="button" hidden>Account erstellen</button>
+                <p class="profile-message" id="delete-account-message" aria-live="polite"></p>
+            </div>
+        </section>
+
+        <div class="chat-shell chat-list-open">
+            <section class="server-create-panel" id="server-create-panel" hidden>
+                <h2>Gruppe erstellen</h2>
+                <form id="server-create-form">
+                    <label for="server-name">Gruppenname</label>
+                    <input id="server-name" type="text" maxlength="30" required>
+                    <div class="server-visibility">
+                        <label><input type="radio" name="server-visibility" value="public" checked> Öffentlich</label>
+                        <label><input type="radio" name="server-visibility" value="private"> Privat</label>
+                    </div>
+                    <p class="profile-message" id="server-create-message" aria-live="polite"></p>
+                    <button type="submit">Gruppe erstellen</button>
+                    <button class="server-create-cancel" id="server-create-cancel" type="button">Abbrechen</button>
+                </form>
+            </section>
+
+            <aside class="sidebar">
+                <div class="status-section">
+                    <div class="chat-list-heading">
+                        <h3>Chats (<span id="online-count">0</span>)</h3>
+                        <div class="chat-list-actions">
+                            <button class="chat-list-action" id="new-chat-button" type="button" aria-label="Neuen Chat starten" title="Neuen Chat starten">&#128100;</button>
+                            <button class="chat-list-action" id="add-server-button" type="button" aria-label="Gruppe erstellen" title="Gruppe erstellen">+</button>
+                        </div>
+                    </div>
+                    <input class="chat-list-search" id="chat-list-search" type="search" placeholder="Chats suchen oder öffentliche Gruppen finden..." autocomplete="off">
+                    <ul id="chat-users"></ul>
+                    <div id="new-chat-panel" hidden>
+                        <input class="user-search" id="user-search" type="search" placeholder="Account suchen..." autocomplete="off">
+                        <ul id="user-search-results"></ul>
+                    </div>
+                </div>
+            </aside>
+
+            <main class="chat-window">
+                <div class="chat-header">
+                    <button class="chat-back-button" id="chat-back-button" type="button" aria-label="Zurück zu den Chats">‹</button>
+                    <h2 id="chat-title">Deine Chats</h2>
+                    <button class="report-chat-button" id="report-chat-button" type="button" hidden>Chat melden</button>
+                    <button class="clear-messages-button" id="clear-messages-button" type="button" hidden>Alle Nachrichten löschen</button>
+                    <button class="report-account-button" id="reporter-delete-button" type="button" hidden></button>
+                    <button class="report-account-button" id="reported-delete-button" type="button" hidden></button>
+                </div>
+                <div id="chat-messages" aria-live="polite"></div>
+
+                <form id="chat-form">
+                    <label class="chat-attachment-picker" for="chat-attachment" title="Datei anhängen" aria-label="Datei anhängen">
+                        +
+                        <input type="file" id="chat-attachment" accept="image/*,video/*,.pdf,.doc,.docx,.txt,.odt,.xls,.xlsx,.ppt,.pptx">
+                    </label>
+                    <input type="text" id="chat-input" placeholder="Schreibe eine Nachricht... @username" maxlength="200" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
+                    <button type="submit">Senden</button>
+                    <p class="chat-attachment-status" id="chat-attachment-status" aria-live="polite"></p>
+                </form>
+            </main>
+
+            <aside class="reports-sidebar" id="reports-sidebar" hidden>
+                <h3>Gemeldete Chats</h3>
+                <ul id="reported-chats"></ul>
+            </aside>
+        </div>
+
+        <section class="social-page" id="videos-page" hidden>
+            <h2>Videos</h2>
+            <p class="social-note">Videos aus MyChat, chronologisch sortiert.</p>
+            <label class="social-search-label" for="video-search">Videos und Accounts suchen</label>
+            <input class="social-search" id="video-search" type="search" placeholder="Titel oder Account eingeben..." autocomplete="off">
+            <div class="social-feed" id="video-feed"></div>
+        </section>
+
+        <section class="social-page" id="stories-page" hidden>
+            <h2>Stories</h2>
+            <p class="social-note">Stories aus MyChat, chronologisch sortiert.</p>
+            <label class="social-search-label" for="story-search">Stories und Accounts suchen</label>
+            <input class="social-search" id="story-search" type="search" placeholder="Text oder Account eingeben..." autocomplete="off">
+            <div class="social-feed" id="story-feed"></div>
+        </section>
+
+        <section class="social-page" id="subscriptions-page" hidden>
+            <h2>Abos</h2>
+            <p class="social-note">Neue Videos und Stories von Accounts, denen du folgst.</p>
+            <div class="feed-filter-row" id="subscription-filter" role="group" aria-label="Abos nach Account filtern"></div>
+            <div class="social-feed" id="subscriptions-feed"></div>
+        </section>
+
+        <section class="social-page" id="account-page" hidden>
+            <button class="profile-close-button" id="account-back-button" type="button">Zurück</button>
+            <div class="account-profile" id="account-profile"></div>
+            <div class="social-feed" id="account-feed"></div>
+        </section>
+
+        <section class="social-page" id="my-page" hidden>
+            <h2>Ich</h2>
+            <form class="social-form" id="description-form">
+                <label for="description-input">Meine Beschreibung</label>
+                <textarea id="description-input" maxlength="500" placeholder="Erzähl etwas über dich..."></textarea>
+                <button type="submit">Beschreibung speichern</button>
+                <p class="social-status" id="description-status" aria-live="polite"></p>
+            </form>
+            <h3>Video posten</h3>
+            <form class="social-form" id="video-form">
+                <label for="video-title">Titel</label>
+                <input id="video-title" type="text" maxlength="80" placeholder="Gib deinem Video einen Titel" required>
+                <label for="video-file">Video auswählen (maximal 25 MB)</label>
+                <input id="video-file" type="file" accept="video/*" required>
+                <button type="submit">Video posten</button>
+                <p class="social-status" id="video-status" aria-live="polite"></p>
+            </form>
+            <h3>Story posten</h3>
+            <form class="social-form" id="story-form">
+                <label for="story-text">Was möchtest du teilen?</label>
+                <textarea id="story-text" maxlength="500" placeholder="Schreibe eine Story..." required></textarea>
+                <label for="story-image">Bild (optional, maximal 5 MB)</label>
+                <input id="story-image" type="file" accept="image/*">
+                <button type="submit">Story posten</button>
+                <p class="social-status" id="story-status" aria-live="polite"></p>
+            </form>
+            <h3>Meine Inhalte</h3>
+            <div class="social-feed" id="my-feed"></div>
+        </section>
+
+        <nav class="social-navigation" aria-label="Hauptnavigation">
+            <button type="button" data-page="chats" aria-current="page">Chats</button>
+            <button type="button" data-page="videos">Videos</button>
+            <button type="button" data-page="stories">Stories</button>
+            <button type="button" data-page="subscriptions">Abos</button>
+            <button type="button" data-page="me">Ich</button>
+        </nav>
+    </div>
+
+    <script>
+        const loginForm = document.querySelector("#login-form");
+        const registerForm = document.querySelector("#register-form");
+        const showRegisterButton = document.querySelector("#show-register-button");
+        const showLoginButton = document.querySelector("#show-login-button");
+        const loginContainer = document.querySelector("#login-container");
+        const websiteContent = document.querySelector("#website-content");
+        const loginMessage = document.querySelector("#login-message");
+        const registerMessage = document.querySelector("#register-message");
+        const logoutButton = document.querySelector("#logout-button");
+        const profileButton = document.querySelector("#profile-button");
+        const profilePanel = document.querySelector("#profile-panel");
+        const profileForm = document.querySelector("#profile-form");
+        const profileName = document.querySelector("#profile-name");
+        const profilePassword = document.querySelector("#profile-password");
+        const profileSaveButton = document.querySelector("#profile-save-button");
+        const profileCloseButton = document.querySelector("#profile-close-button");
+        const profileMessage = document.querySelector("#profile-message");
+        const deleteAccountSection = document.querySelector("#delete-account-section");
+        const accountToDeleteSearch = document.querySelector("#account-to-delete-search");
+        const accountDeleteSuggestions = document.querySelector("#account-delete-suggestions");
+        const deleteAccountButton = document.querySelector("#delete-account-button");
+        const restoreAccountButton = document.querySelector("#restore-account-button");
+        const createAccountButton = document.querySelector("#create-account-button");
+        const deleteAccountMessage = document.querySelector("#delete-account-message");
+        const chatForm = document.querySelector("#chat-form");
+        const chatInput = document.querySelector("#chat-input");
+        const chatAttachment = document.querySelector("#chat-attachment");
+        const chatAttachmentStatus = document.querySelector("#chat-attachment-status");
+        const chatMessages = document.querySelector("#chat-messages");
+        const chatTitle = document.querySelector("#chat-title");
+        const chatBackButton = document.querySelector("#chat-back-button");
+        const reportChatButton = document.querySelector("#report-chat-button");
+        const clearMessagesButton = document.querySelector("#clear-messages-button");
+        const reporterDeleteButton = document.querySelector("#reporter-delete-button");
+        const reportedDeleteButton = document.querySelector("#reported-delete-button");
+        const reportsSidebar = document.querySelector("#reports-sidebar");
+        const reportedChats = document.querySelector("#reported-chats");
+        const chatUsers = document.querySelector("#chat-users");
+        const onlineCount = document.querySelector("#online-count");
+        const userSearch = document.querySelector("#user-search");
+        const userSearchResults = document.querySelector("#user-search-results");
+        const chatListSearch = document.querySelector("#chat-list-search");
+        const newChatButton = document.querySelector("#new-chat-button");
+        const newChatPanel = document.querySelector("#new-chat-panel");
+        const addServerButton = document.querySelector("#add-server-button");
+        const serverCreatePanel = document.querySelector("#server-create-panel");
+        const serverCreateForm = document.querySelector("#server-create-form");
+        const serverNameInput = document.querySelector("#server-name");
+        const serverCreateMessage = document.querySelector("#server-create-message");
+        const serverCreateCancel = document.querySelector("#server-create-cancel");
+        const welcomeUser = document.querySelector("#welcome-user");
+        const chatShell = document.querySelector(".chat-shell");
+        const videosPage = document.querySelector("#videos-page");
+        const storiesPage = document.querySelector("#stories-page");
+        const subscriptionsPage = document.querySelector("#subscriptions-page");
+        const accountPage = document.querySelector("#account-page");
+        const myPage = document.querySelector("#my-page");
+        const videoForm = document.querySelector("#video-form");
+        const videoTitle = document.querySelector("#video-title");
+        const videoFile = document.querySelector("#video-file");
+        const videoSearch = document.querySelector("#video-search");
+        const videoFeed = document.querySelector("#video-feed");
+        const videoStatus = document.querySelector("#video-status");
+        const storyForm = document.querySelector("#story-form");
+        const storyText = document.querySelector("#story-text");
+        const storyImage = document.querySelector("#story-image");
+        const storySearch = document.querySelector("#story-search");
+        const storyFeed = document.querySelector("#story-feed");
+        const storyStatus = document.querySelector("#story-status");
+        const subscriptionsFilter = document.querySelector("#subscription-filter");
+        const subscriptionsFeed = document.querySelector("#subscriptions-feed");
+        const accountProfile = document.querySelector("#account-profile");
+        const accountFeed = document.querySelector("#account-feed");
+        const accountBackButton = document.querySelector("#account-back-button");
+        const descriptionForm = document.querySelector("#description-form");
+        const descriptionInput = document.querySelector("#description-input");
+        const descriptionStatus = document.querySelector("#description-status");
+        const myFeed = document.querySelector("#my-feed");
+        const socialNavigation = document.querySelector(".social-navigation");
+        let selectedAccountToDelete = "";
+        let activeReport = null;
+        let currentSocialPage = "chats";
+        let viewingProfileUser = "";
+        let profileReturnPage = "chats";
+        let selectedSubscriptionUser = "";
+        let subscriptionsExpanded = false;
+        let socialRenderVersion = 0;
+        const renderedMediaUrls = new Set();
+        const renderedMessageMediaUrls = new Set();
+
+        // Demo: mehrere Benutzer mit jeweils eigenem Namen und PIN als Hash.
+        // Das ist nur für Frontend-Demos; echte Sicherheit braucht einen Server.
+        const VALID_USERS = {
+            "111": {
+                usernameHash: "f6e0a1e2ac41945a9aa7ff8a8aaa0cebc12a3bcc981a929ad5cf810a090e11ae",
+                pinHash: "f6e0a1e2ac41945a9aa7ff8a8aaa0cebc12a3bcc981a929ad5cf810a090e11ae"
+            },
+            "222": {
+                usernameHash: "9b871512327c09ce91dd649b3f96a63b7408ef267c8cc5710114e629730cb61f",
+                pinHash: "9b871512327c09ce91dd649b3f96a63b7408ef267c8cc5710114e629730cb61f"
+            },
+            "333": {
+                usernameHash: "556d7dc3a115356350f1f9910b1af1ab0e312d4b3e4fc788d2da63668f36d017",
+                pinHash: "556d7dc3a115356350f1f9910b1af1ab0e312d4b3e4fc788d2da63668f36d017"
+            },
+            "123": {
+                usernameHash: "a665a45920422f9d417e4867efdc4fb8a04a1f3fff1fa07e998e86f7f7a27ae3",
+                pinHash: "a665a45920422f9d417e4867efdc4fb8a04a1f3fff1fa07e998e86f7f7a27ae3"
+            }
+        };
+        const STORAGE_KEYS = {
+            users: "chatUsers",
+            messages: "chatMessages",
+            accounts: "chatAccounts",
+            deletedUsers: "chatDeletedUsers",
+            reports: "chatReports",
+            servers: "chatServers",
+            videos: "chatVideos",
+            stories: "chatStories",
+            profiles: "chatProfiles"
+        };
+
+        let currentUserName = "";
+        let activeChatUser = "";
+        let activeServer = "";
+
+        function getReadMessagesKey(userName = currentUserName) {
+            return `chatReadPrivateMessages:${userName}`;
+        }
+
+        function getReadServerMessagesKey(userName = currentUserName) {
+            return `chatReadServerMessages:${userName}`;
+        }
+
+        function getDisplayName(userName) {
+            return userName === "123" ? "Admin" : userName;
+        }
+
+        function getStoredArray(key, fallback) {
+            try {
+                const saved = JSON.parse(localStorage.getItem(key));
+                return Array.isArray(saved) ? saved : fallback;
+            } catch (error) {
+                return fallback;
+            }
+        }
+
+        function setStoredArray(key, value) {
+            localStorage.setItem(key, JSON.stringify(value));
+        }
+
+        function getSubscriptions(userName = currentUserName) {
+            return [...new Set(getStoredArray(`chatSubscriptions:${userName}`, []))]
+                .filter((user) => user && user !== userName);
+        }
+
+        function getUserDescription(userName) {
+            const profiles = getStoredArray(STORAGE_KEYS.profiles, []);
+            const profile = profiles.find((entry) => entry.username === userName);
+            return profile?.description || "";
+        }
+
+        function setUserDescription(userName, description) {
+            const profiles = getStoredArray(STORAGE_KEYS.profiles, []);
+            const profile = profiles.find((entry) => entry.username === userName);
+            if (profile) {
+                profile.description = description;
+            } else {
+                profiles.push({ username: userName, description });
+            }
+            setStoredArray(STORAGE_KEYS.profiles, profiles);
+        }
+
+        function openSocialMediaDatabase() {
+            return new Promise((resolve, reject) => {
+                if (!window.indexedDB) {
+                    reject(new Error("Dieser Browser unterstützt keine lokale Medienspeicherung."));
+                    return;
+                }
+
+                const request = window.indexedDB.open("mySocialMedia", 1);
+                request.onupgradeneeded = () => {
+                    const database = request.result;
+                    if (!database.objectStoreNames.contains("media")) {
+                        database.createObjectStore("media");
+                    }
+                };
+                request.onsuccess = () => resolve(request.result);
+                request.onerror = () => reject(request.error || new Error("Die Mediendatenbank konnte nicht geöffnet werden."));
+            });
+        }
+
+        async function storeSocialMedia(file) {
+            const database = await openSocialMediaDatabase();
+            const mediaId = `media-${createMessageId()}`;
+            return new Promise((resolve, reject) => {
+                const transaction = database.transaction("media", "readwrite");
+                transaction.objectStore("media").put(file, mediaId);
+                transaction.oncomplete = () => {
+                    database.close();
+                    resolve(mediaId);
+                };
+                transaction.onerror = () => {
+                    database.close();
+                    reject(transaction.error || new Error("Die Datei konnte nicht gespeichert werden."));
+                };
+                transaction.onabort = () => {
+                    database.close();
+                    reject(transaction.error || new Error("Das Speichern der Datei wurde abgebrochen."));
+                };
+            });
+        }
+
+        async function getSocialMedia(mediaId) {
+            const database = await openSocialMediaDatabase();
+            return new Promise((resolve, reject) => {
+                const transaction = database.transaction("media", "readonly");
+                const request = transaction.objectStore("media").get(mediaId);
+                request.onsuccess = () => {
+                    database.close();
+                    resolve(request.result || null);
+                };
+                request.onerror = () => {
+                    database.close();
+                    reject(request.error || new Error("Die Datei konnte nicht geladen werden."));
+                };
+            });
+        }
+
+        async function deleteSocialMedia(mediaId) {
+            const database = await openSocialMediaDatabase();
+            return new Promise((resolve, reject) => {
+                const transaction = database.transaction("media", "readwrite");
+                transaction.objectStore("media").delete(mediaId);
+                transaction.oncomplete = () => {
+                    database.close();
+                    resolve();
+                };
+                transaction.onerror = () => {
+                    database.close();
+                    reject(transaction.error || new Error("Die Datei konnte nicht gelöscht werden."));
+                };
+                transaction.onabort = () => {
+                    database.close();
+                    reject(transaction.error || new Error("Das Löschen der Datei wurde abgebrochen."));
+                };
+            });
+        }
+
+        function clearRenderedMediaUrls() {
+            renderedMediaUrls.forEach((url) => URL.revokeObjectURL(url));
+            renderedMediaUrls.clear();
+        }
+
+        function switchSocialPage(page) {
+            currentSocialPage = page;
+            viewingProfileUser = "";
+            socialRenderVersion += 1;
+            chatShell.hidden = page !== "chats";
+            videosPage.hidden = page !== "videos";
+            storiesPage.hidden = page !== "stories";
+            subscriptionsPage.hidden = page !== "subscriptions";
+            accountPage.hidden = true;
+            myPage.hidden = page !== "me";
+            if (page === "chats") {
+                chatShell.classList.add("chat-list-open");
+            }
+            socialNavigation.querySelectorAll("button").forEach((button) => {
+                if (button.dataset.page === page) {
+                    button.setAttribute("aria-current", "page");
+                } else {
+                    button.removeAttribute("aria-current");
+                }
+            });
+            clearRenderedMediaUrls();
+            if (page === "videos") {
+                renderSocialFeed("videos");
+            } else if (page === "stories") {
+                renderSocialFeed("stories");
+            } else if (page === "subscriptions") {
+                renderSubscriptionsFilter();
+                renderSocialFeed("subscriptions");
+            } else if (page === "me") {
+                descriptionInput.value = getUserDescription(currentUserName);
+                descriptionStatus.textContent = "";
+                renderSocialFeed("me");
+            }
+        }
+
+        function openAccountProfile(userName) {
+            if (!userName || userName === "System" || userName === "__admin__") {
+                return;
+            }
+            if (currentSocialPage === "account" && viewingProfileUser === userName) {
+                return;
+            }
+            profileReturnPage = currentSocialPage === "account" ? profileReturnPage : currentSocialPage;
+            currentSocialPage = "account";
+            viewingProfileUser = userName;
+            socialRenderVersion += 1;
+            chatShell.hidden = true;
+            videosPage.hidden = true;
+            storiesPage.hidden = true;
+            subscriptionsPage.hidden = true;
+            myPage.hidden = true;
+            accountPage.hidden = false;
+            socialNavigation.querySelectorAll("button").forEach((button) => button.removeAttribute("aria-current"));
+            clearRenderedMediaUrls();
+            renderAccountProfile();
+            renderSocialFeed("account");
+        }
+
+        function renderAccountProfile() {
+            const userName = viewingProfileUser;
+            if (!userName) {
+                return;
+            }
+            accountProfile.replaceChildren();
+            const header = document.createElement("div");
+            header.className = "account-profile-header";
+            const title = document.createElement("h2");
+            title.textContent = getDisplayName(userName);
+            header.appendChild(title);
+            if (userName !== currentUserName) {
+                const isSubscribed = getSubscriptions().includes(userName);
+                const subscribeButton = document.createElement("button");
+                subscribeButton.className = `account-subscribe-button${isSubscribed ? " subscribed" : ""}`;
+                subscribeButton.type = "button";
+                subscribeButton.textContent = isSubscribed ? "Abonniert" : "Abonnieren";
+                subscribeButton.setAttribute("aria-pressed", String(isSubscribed));
+                subscribeButton.addEventListener("click", () => {
+                    const subscriptions = getSubscriptions();
+                    const nextSubscriptions = isSubscribed
+                        ? subscriptions.filter((entry) => entry !== userName)
+                        : [...subscriptions, userName];
+                    setStoredArray(`chatSubscriptions:${currentUserName}`, nextSubscriptions);
+                    renderAccountProfile();
+                    if (currentSocialPage === "subscriptions") {
+                        renderSubscriptionsFilter();
+                        renderSocialFeed("subscriptions");
+                    }
+                });
+                header.appendChild(subscribeButton);
+            }
+            accountProfile.appendChild(header);
+            const description = document.createElement("p");
+            description.className = "account-description";
+            description.textContent = getUserDescription(userName) || "Noch keine Beschreibung.";
+            accountProfile.appendChild(description);
+        }
+
+        function renderSubscriptionsFilter() {
+            const subscriptions = getSubscriptions();
+            if (!subscriptions.includes(selectedSubscriptionUser)) {
+                selectedSubscriptionUser = "";
+            }
+            subscriptionsFilter.replaceChildren();
+
+            const addFilterButton = (label, userName, className = "") => {
+                const button = document.createElement("button");
+                button.className = `feed-filter-button${className ? ` ${className}` : ""}`;
+                button.type = "button";
+                button.textContent = label;
+                button.setAttribute("aria-pressed", String(selectedSubscriptionUser === userName));
+                button.addEventListener("click", () => {
+                    selectedSubscriptionUser = userName;
+                    renderSubscriptionsFilter();
+                    renderSocialFeed("subscriptions");
+                });
+                subscriptionsFilter.appendChild(button);
+            };
+
+            addFilterButton("Alle", "");
+            const visibleSubscriptions = subscriptionsExpanded ? subscriptions : subscriptions.slice(0, 5);
+            visibleSubscriptions.forEach((user) => {
+                addFilterButton(getDisplayName(user), user);
+            });
+
+            if (subscriptions.length > 5) {
+                const moreButton = document.createElement("button");
+                moreButton.className = "feed-filter-button feed-filter-more";
+                moreButton.type = "button";
+                moreButton.textContent = subscriptionsExpanded ? "Weniger anzeigen" : "Mehr anzeigen";
+                moreButton.setAttribute("aria-expanded", String(subscriptionsExpanded));
+                moreButton.addEventListener("click", () => {
+                    subscriptionsExpanded = !subscriptionsExpanded;
+                    renderSubscriptionsFilter();
+                });
+                subscriptionsFilter.appendChild(moreButton);
+            }
+        }
+
+        function getSocialPosts(type, userName = "") {
+            const videos = getStoredArray(STORAGE_KEYS.videos, [])
+                .map((post) => ({ ...post, contentType: "videos" }));
+            const stories = getStoredArray(STORAGE_KEYS.stories, [])
+                .map((post) => ({ ...post, contentType: "stories" }));
+            let posts = type === "videos"
+                ? videos
+                : type === "stories"
+                    ? stories
+                    : [...videos, ...stories];
+            if (type === "subscriptions") {
+                const subscriptions = getSubscriptions();
+                posts = posts.filter((post) => subscriptions.includes(post.user) &&
+                    (!selectedSubscriptionUser || post.user === selectedSubscriptionUser));
+            } else if (type === "me") {
+                posts = posts.filter((post) => post.user === currentUserName);
+            } else if (type === "account") {
+                posts = posts.filter((post) => post.user === viewingProfileUser);
+            } else if (userName) {
+                posts = posts.filter((post) => post.user === userName);
+            }
+            return posts.sort((first, second) => (second.createdAt || 0) - (first.createdAt || 0));
+        }
+
+        async function renderSocialFeed(type) {
+            const renderVersion = ++socialRenderVersion;
+            const feed = type === "videos" ? videoFeed
+                : type === "stories" ? storyFeed
+                    : type === "subscriptions" ? subscriptionsFeed
+                        : type === "me" ? myFeed : accountFeed;
+            const query = type === "videos" ? videoSearch.value.trim().toLocaleLowerCase()
+                : type === "stories" ? storySearch.value.trim().toLocaleLowerCase()
+                    : "";
+            const posts = getSocialPosts(type).filter((post) => !query ||
+                getDisplayName(post.user).toLocaleLowerCase().includes(query) ||
+                (post.title || "").toLocaleLowerCase().includes(query) ||
+                (post.text || "").toLocaleLowerCase().includes(query));
+            feed.replaceChildren();
+
+            if (posts.length === 0) {
+                const emptyMessage = document.createElement("p");
+                emptyMessage.className = "social-note";
+                emptyMessage.textContent = query
+                    ? "Keine passenden Beiträge oder Accounts gefunden."
+                    : type === "subscriptions"
+                        ? "Von deinen abonnierten Accounts gibt es noch keine Beiträge."
+                        : type === "me" || type === "account"
+                            ? "Noch keine Videos oder Stories."
+                            : type === "videos" ? "Noch keine Videos." : "Noch keine Stories.";
+                feed.appendChild(emptyMessage);
+                return;
+            }
+
+            for (const post of posts) {
+                if (renderVersion !== socialRenderVersion) {
+                    return;
+                }
+
+                const card = document.createElement("article");
+                card.className = "social-post";
+                const header = document.createElement("div");
+                header.className = "social-post-header";
+                const authorDetails = document.createElement("div");
+                const author = document.createElement("button");
+                author.className = "social-author-link";
+                author.type = "button";
+                author.textContent = getDisplayName(post.user);
+                author.addEventListener("click", () => openAccountProfile(post.user));
+                const date = document.createElement("small");
+                date.textContent = new Date(post.createdAt).toLocaleString();
+                authorDetails.append(author, date);
+                header.appendChild(authorDetails);
+
+                if (post.user === currentUserName || currentUserName === "123") {
+                    const deleteButton = document.createElement("button");
+                    deleteButton.className = "social-delete-button";
+                    deleteButton.type = "button";
+                    deleteButton.textContent = "Löschen";
+                    deleteButton.addEventListener("click", () => deleteSocialPost(post.contentType, post.id));
+                    header.appendChild(deleteButton);
+                }
+                card.appendChild(header);
+
+                if (post.title) {
+                    const title = document.createElement("h3");
+                    title.textContent = post.title;
+                    card.appendChild(title);
+                }
+                if (post.text) {
+                    const text = document.createElement("p");
+                    text.textContent = post.text;
+                    card.appendChild(text);
+                }
+                if (post.mediaId) {
+                    try {
+                        const media = await getSocialMedia(post.mediaId);
+                        if (renderVersion !== socialRenderVersion) {
+                            return;
+                        }
+                        if (!media) {
+                            throw new Error("Die gespeicherte Datei wurde nicht gefunden.");
+                        }
+
+                        const isVideoPost = post.contentType === "videos";
+                        const mediaElement = document.createElement(isVideoPost ? "video" : "img");
+                        const mediaUrl = URL.createObjectURL(media);
+                        renderedMediaUrls.add(mediaUrl);
+                        mediaElement.src = mediaUrl;
+                        if (isVideoPost) {
+                            mediaElement.controls = true;
+                            mediaElement.playsInline = true;
+                        } else {
+                            mediaElement.alt = `Bild von ${getDisplayName(post.user)}`;
+                        }
+                        card.appendChild(mediaElement);
+                    } catch (error) {
+                        const mediaError = document.createElement("p");
+                        mediaError.className = "social-status";
+                        mediaError.textContent = `Medium konnte nicht geladen werden: ${error.message}`;
+                        card.appendChild(mediaError);
+                    }
+                }
+                feed.appendChild(card);
+            }
+        }
+
+        async function deleteSocialPost(type, postId) {
+            const storageKey = type === "videos" ? STORAGE_KEYS.videos : STORAGE_KEYS.stories;
+            const posts = getStoredArray(storageKey, []);
+            const post = posts.find((entry) => entry.id === postId);
+            if (!post || (post.user !== currentUserName && currentUserName !== "123")) {
+                return;
+            }
+
+            setStoredArray(storageKey, posts.filter((entry) => entry.id !== postId));
+            let cleanupErrorMessage = "";
+            if (post.mediaId) {
+                try {
+                    await deleteSocialMedia(post.mediaId);
+                } catch (error) {
+                    cleanupErrorMessage =
+                        `Beitrag gelöscht, aber die Mediendatei konnte nicht entfernt werden: ${error.message}`;
+                }
+            }
+            if (currentSocialPage === "videos" || currentSocialPage === "stories" ||
+                currentSocialPage === "subscriptions" || currentSocialPage === "me" ||
+                currentSocialPage === "account") {
+                renderSocialFeed(currentSocialPage);
+            }
+            if (cleanupErrorMessage) {
+                const feed = currentSocialPage === "videos" ? videoFeed
+                    : currentSocialPage === "stories" ? storyFeed
+                        : currentSocialPage === "subscriptions" ? subscriptionsFeed
+                            : currentSocialPage === "me" ? myFeed : accountFeed;
+                const status = document.createElement("p");
+                status.className = "social-status";
+                status.setAttribute("role", "alert");
+                status.textContent = cleanupErrorMessage;
+                feed.prepend(status);
+            }
+        }
+
+        function getServerTitle(server) {
+            return server ? server.name : "Gruppe";
+        }
+
+        function getServers() {
+            const savedServers = getStoredArray(STORAGE_KEYS.servers, []);
+            if (savedServers.length === 0) {
+                return [];
+            }
+
+            const migratedServers = savedServers
+                .filter((server) => !/^server-[1-3]$/.test(server.id) ||
+                    server.owner !== "123" || !/^(Server|Gruppe) [1-3]$/.test(server.name))
+                .map((server) => ({
+                    ...server,
+                    id: server.id.startsWith("private-") ? `ID-${server.id.slice(8)}` : server.id,
+                    name: /^Server \d+$/.test(server.name) ? server.name.replace("Server", "Gruppe") : server.name,
+                    members: [...new Set([
+                        ...(Array.isArray(server.members) ? server.members : []),
+                        ...(server.owner ? [server.owner] : [])
+                    ])]
+                }));
+            const removedServerIds = new Set(savedServers
+                .filter((server) => /^server-[1-3]$/.test(server.id) &&
+                    server.owner === "123" && /^(Server|Gruppe) [1-3]$/.test(server.name))
+                .map((server) => server.id));
+            const idMap = new Map(savedServers
+                .filter((server) => !removedServerIds.has(server.id))
+                .map((server, index) => [server.id, migratedServers[index].id]));
+            const serversChanged = migratedServers.length !== savedServers.length ||
+                migratedServers.some((server, index) => {
+                    const savedMembers = Array.isArray(savedServers[index]?.members) ? savedServers[index].members : [];
+                    return server.id !== savedServers[index]?.id ||
+                        server.name !== savedServers[index]?.name ||
+                        server.members.length !== savedMembers.length ||
+                        server.members.some((member, memberIndex) => member !== savedMembers[memberIndex]);
+                });
+            if (serversChanged) {
+                const messages = getStoredArray(STORAGE_KEYS.messages, []);
+                setStoredArray(STORAGE_KEYS.messages, messages
+                    .filter((message) => !removedServerIds.has(message.serverId))
+                    .map((message) => ({
+                        ...message,
+                        serverId: idMap.get(message.serverId) || message.serverId
+                    })));
+                const reports = getStoredArray(STORAGE_KEYS.reports, []);
+                setStoredArray(STORAGE_KEYS.reports, reports
+                    .filter((report) => !removedServerIds.has(report.serverId))
+                    .map((report) => ({
+                        ...report,
+                        serverId: idMap.get(report.serverId) || report.serverId
+                    })));
+                setStoredArray(STORAGE_KEYS.servers, migratedServers);
+            }
+            return migratedServers;
+        }
+
+        function createServerId() {
+            let serverId = "";
+            const servers = getServers();
+            do {
+                serverId = `ID-${Math.random().toString(36).slice(2, 8).toUpperCase()}`;
+            } while (servers.some((server) => server.id === serverId));
+            return serverId;
+        }
+
+        function joinPublicGroup(serverId) {
+            const servers = getServers();
+            const server = servers.find((entry) => entry.id === serverId);
+            if (!server || server.visibility !== "public") {
+                return false;
+            }
+
+            const members = Array.isArray(server.members) ? server.members : [];
+            if (!members.includes(currentUserName)) {
+                server.members = [...members, currentUserName];
+                setStoredArray(STORAGE_KEYS.servers, servers);
+            }
+            return true;
+        }
+
+        function updateStoredUserName(oldName, newName) {
+            const users = getStoredArray(STORAGE_KEYS.users, []);
+            setStoredArray(STORAGE_KEYS.users, users.map((user) => user === oldName ? newName : user));
+
+            const messages = getStoredArray(STORAGE_KEYS.messages, []);
+            setStoredArray(STORAGE_KEYS.messages, messages.map((message) => ({
+                ...message,
+                user: message.user === oldName ? newName : message.user,
+                recipient: message.recipient === oldName ? newName : message.recipient
+            })));
+
+            [STORAGE_KEYS.videos, STORAGE_KEYS.stories].forEach((key) => {
+                const posts = getStoredArray(key, []);
+                setStoredArray(key, posts.map((post) => ({
+                    ...post,
+                    user: post.user === oldName ? newName : post.user
+                })));
+            });
+
+            const profiles = getStoredArray(STORAGE_KEYS.profiles, []);
+            setStoredArray(STORAGE_KEYS.profiles, profiles.map((profile) => ({
+                ...profile,
+                username: profile.username === oldName ? newName : profile.username
+            })));
+
+            const oldSubscriptionsKey = `chatSubscriptions:${oldName}`;
+            const newSubscriptionsKey = `chatSubscriptions:${newName}`;
+            const savedSubscriptions = localStorage.getItem(oldSubscriptionsKey);
+            if (savedSubscriptions !== null) {
+                localStorage.setItem(newSubscriptionsKey, savedSubscriptions);
+                localStorage.removeItem(oldSubscriptionsKey);
+            }
+            Object.keys(localStorage)
+                .filter((key) => key.startsWith("chatSubscriptions:") && key !== newSubscriptionsKey)
+                .forEach((key) => {
+                    const subscriptions = getStoredArray(key, []);
+                    if (subscriptions.includes(oldName)) {
+                        setStoredArray(key, subscriptions.map((user) => user === oldName ? newName : user));
+                    }
+                });
+        }
+
+        function accountExists(username) {
+            const accounts = getStoredArray(STORAGE_KEYS.accounts, []);
+            const deletedUsers = getStoredArray(STORAGE_KEYS.deletedUsers, []);
+            return !deletedUsers.includes(username) &&
+                (Boolean(VALID_USERS[username]) || accounts.some((account) => account.username === username));
+        }
+
+        function getManagedUsers() {
+            const accounts = getStoredArray(STORAGE_KEYS.accounts, []).map((account) => account.username);
+            const legacyUsers = Object.keys(VALID_USERS);
+            const deletedUsers = getStoredArray(STORAGE_KEYS.deletedUsers, []);
+            return [...new Set([...legacyUsers, ...accounts, ...deletedUsers])].filter((user) => user !== "123");
+        }
+
+        function renderAccountOptions() {
+            const searchText = accountToDeleteSearch.value.trim();
+            const query = searchText.toLowerCase();
+            const deletedUsers = getStoredArray(STORAGE_KEYS.deletedUsers, []);
+            const users = getManagedUsers()
+                .filter((user) => getDisplayName(user).toLowerCase().includes(query))
+                .slice(0, 3);
+            accountDeleteSuggestions.innerHTML = "";
+
+            const noResult = users.length === 0 && query;
+            createAccountButton.hidden = !noResult || !selectedAccountToDelete;
+            deleteAccountButton.hidden = false;
+            restoreAccountButton.hidden = true;
+
+            if (noResult) {
+                const suggestion = document.createElement("li");
+                suggestion.className = "user-item new-account-suggestion";
+                suggestion.textContent = searchText;
+                suggestion.addEventListener("click", () => {
+                    selectedAccountToDelete = searchText;
+                    accountToDeleteSearch.value = searchText;
+                    renderAccountOptions();
+                });
+                accountDeleteSuggestions.appendChild(suggestion);
+            }
+
+            users.forEach((user) => {
+                const item = document.createElement("li");
+                const isDeleted = deletedUsers.includes(user);
+                const accounts = getStoredArray(STORAGE_KEYS.accounts, []);
+                const account = accounts.find((entry) => entry.username === user);
+                const itemClass = isDeleted
+                    ? "user-item deleted-account"
+                    : account && account.adminCreated
+                        ? "user-item new-account-suggestion"
+                        : "user-item";
+                item.className = itemClass;
+                item.textContent = getDisplayName(user);
+                item.addEventListener("click", () => {
+                    selectedAccountToDelete = user;
+                    accountToDeleteSearch.value = getDisplayName(user);
+                    renderAccountOptions();
+                });
+                accountDeleteSuggestions.appendChild(item);
+            });
+            const selectedIsDeleted = deletedUsers.includes(selectedAccountToDelete);
+            if (!noResult) {
+                restoreAccountButton.hidden = !selectedIsDeleted;
+            }
+            deleteAccountButton.disabled = !selectedAccountToDelete || selectedIsDeleted;
+            restoreAccountButton.disabled = !selectedAccountToDelete || !selectedIsDeleted;
+        }
+
+        function createMessageId() {
+            return `${Date.now()}-${Math.random().toString(36).slice(2)}`;
+        }
+
+        function renderUsers() {
+            const query = chatListSearch.value.trim().toLocaleLowerCase();
+            const deletedUsers = getStoredArray(STORAGE_KEYS.deletedUsers, []);
+            const messages = getStoredArray(STORAGE_KEYS.messages, []);
+            const readPrivateMessages = new Set(getStoredArray(getReadMessagesKey(), []));
+            const readServerMessages = new Set(getStoredArray(getReadServerMessagesKey(), []));
+            const latestMessages = new Map();
+            const privateUnreadCounts = new Map();
+            messages.forEach((message) => {
+                const chatType = message.chatType || (message.recipient ? "private" : "global");
+                if (chatType !== "private" ||
+                    ![message.user, message.recipient].includes(currentUserName) ||
+                    (message.adminOnly && currentUserName !== "123")) {
+                    return;
+                }
+                const otherUser = message.user === currentUserName ? message.recipient : message.user;
+                if (!otherUser || otherUser === currentUserName || deletedUsers.includes(otherUser)) {
+                    return;
+                }
+                if (message.user !== currentUserName && !message.deleted &&
+                    !readPrivateMessages.has(message.id)) {
+                    privateUnreadCounts.set(otherUser, (privateUnreadCounts.get(otherUser) || 0) + 1);
+                }
+                const previousMessage = latestMessages.get(otherUser);
+                if (!previousMessage || (message.createdAt || 0) > (previousMessage.createdAt || 0)) {
+                    latestMessages.set(otherUser, message);
+                }
+            });
+            const isAdmin = currentUserName === "123";
+            const latestGroupMessages = new Map();
+            const groupUnreadCounts = new Map();
+            const servers = getServers();
+            messages.forEach((message) => {
+                if (message.chatType === "server" && message.serverId) {
+                    if (message.user !== currentUserName && !message.deleted &&
+                        !readServerMessages.has(message.id)) {
+                        groupUnreadCounts.set(message.serverId, (groupUnreadCounts.get(message.serverId) || 0) + 1);
+                    }
+                    const previousMessage = latestGroupMessages.get(message.serverId);
+                    if (!previousMessage || (message.createdAt || 0) > (previousMessage.createdAt || 0)) {
+                        latestGroupMessages.set(message.serverId, message);
+                    }
+                }
+            });
+
+            const chats = [...latestMessages.entries()]
+                .filter(([user]) => !query || getDisplayName(user).toLocaleLowerCase().includes(query))
+                .map(([user, message]) => ({
+                    type: "private",
+                    id: user,
+                    title: getDisplayName(user),
+                    activity: message.createdAt || 0,
+                    preview: `${message.user === currentUserName ? "Du: " : ""}${message.deleted ? "Nachricht gelöscht" : message.text || message.attachment?.name || ""}`,
+                    unread: privateUnreadCounts.get(user) || 0
+                }));
+            const groups = servers
+                .filter((server) => server.members.includes(currentUserName))
+                .filter((server) => !query ||
+                    server.name.toLocaleLowerCase().includes(query) ||
+                    server.id.toLocaleLowerCase().includes(query))
+                .map((server) => {
+                    const message = latestGroupMessages.get(server.id);
+                    return {
+                        type: "server",
+                        id: server.id,
+                        title: server.visibility === "private" ? `${server.name} (${server.id})` : server.name,
+                        activity: message?.createdAt || server.createdAt || 0,
+                        preview: message
+                            ? `${getDisplayName(message.user)}: ${message.deleted ? "Nachricht gelöscht" : message.text || message.attachment?.name || ""}`
+                            : "Gruppe erstellt",
+                        unread: groupUnreadCounts.get(server.id) || 0
+                    };
+                });
+            const joinedServerIds = new Set(groups.map((group) => group.id));
+            const publicGroupResults = query
+                ? servers.filter((server) => server.visibility === "public" &&
+                    !joinedServerIds.has(server.id) &&
+                    (server.name.toLocaleLowerCase().includes(query) ||
+                    server.id.toLocaleLowerCase().includes(query)))
+                    .map((server) => ({
+                        type: "join",
+                        id: server.id,
+                        title: server.name,
+                        activity: 0,
+                        preview: "Öffentliche Gruppe"
+                    }))
+                : [];
+            const allChats = [...chats, ...groups].sort((first, second) => second.activity - first.activity);
+            chatUsers.innerHTML = "";
+            onlineCount.textContent = allChats.length;
+
+            [...allChats, ...publicGroupResults].forEach((chat) => {
+                const item = document.createElement("li");
+                item.className = "user-item";
+                const name = document.createElement("strong");
+                if (chat.type === "server" || chat.type === "join") {
+                    name.textContent = `👥 ${chat.title}`;
+                } else {
+                    const accountLink = document.createElement("button");
+                    accountLink.className = "chat-account-link";
+                    accountLink.type = "button";
+                    accountLink.textContent = chat.title;
+                    accountLink.addEventListener("click", (event) => {
+                        event.stopPropagation();
+                        openAccountProfile(chat.id);
+                    });
+                    name.appendChild(accountLink);
+                }
+                if (chat.type !== "join" && chat.unread > 0) {
+                    const unread = document.createElement("span");
+                    unread.className = "unread-count";
+                    unread.textContent = String(chat.unread);
+                    unread.setAttribute("aria-label", `${chat.unread} ungelesene Nachrichten`);
+                    name.appendChild(unread);
+                }
+                const preview = document.createElement("small");
+                preview.className = "chat-list-preview";
+                preview.textContent = chat.preview;
+                item.append(name, preview);
+                if (chat.type === "join") {
+                    const joinButton = document.createElement("button");
+                    joinButton.className = "join-group-button";
+                    joinButton.type = "button";
+                    joinButton.textContent = "Beitreten";
+                    joinButton.addEventListener("click", (event) => {
+                        event.stopPropagation();
+                        if (joinPublicGroup(chat.id)) {
+                            renderUsers();
+                            openServerChat(chat.id);
+                        }
+                    });
+                    item.appendChild(joinButton);
+                } else if (chat.type === "server") {
+                    const server = servers.find((entry) => entry.id === chat.id);
+                    if (server && (isAdmin || server.owner === currentUserName)) {
+                        const deleteButton = document.createElement("button");
+                        deleteButton.className = "server-delete-button";
+                        deleteButton.type = "button";
+                        deleteButton.textContent = "Löschen";
+                        deleteButton.addEventListener("click", (event) => {
+                            event.stopPropagation();
+                            deleteServer(chat.id);
+                        });
+                        item.appendChild(deleteButton);
+                    }
+                }
+                item.addEventListener("click", () => {
+                    if (chat.type === "server") {
+                        openServerChat(chat.id);
+                    } else if (chat.type === "private") {
+                        openPersonalChat(chat.id);
+                    }
+                });
+                chatUsers.appendChild(item);
+            });
+        }
+
+        function renderServers() {
+            renderUsers();
+        }
+
+        function openPersonalChat(user, report = null) {
+            if (!user || user === currentUserName) {
+                return;
+            }
+
+            chatAttachment.value = "";
+            chatAttachmentStatus.textContent = "";
+            activeChatUser = user;
+            activeServer = "";
+            newChatPanel.hidden = true;
+            chatShell.classList.remove("chat-list-open");
+            activeReport = report;
+            markPrivateMessagesRead(user);
+            renderUsers();
+            updateChatComposerAccess();
+            chatTitle.textContent = report
+                ? `Gemeldeter Chat: ${getDisplayName(report.reportedBy)} und ${getDisplayName(report.reportedUser)}`
+                : `Chat mit ${getDisplayName(user)}`;
+            reportChatButton.hidden = currentUserName === "123";
+            const reported = getStoredArray(STORAGE_KEYS.reports, []).some((report) =>
+                report.reportedBy === currentUserName && report.reportedUser === user);
+            reportChatButton.disabled = reported;
+            reportChatButton.textContent = reported ? "Chat gemeldet" : "Chat melden";
+            const isReportReview = currentUserName === "123" && report &&
+                report.reportedUser === user;
+            reporterDeleteButton.hidden = !isReportReview;
+            reportedDeleteButton.hidden = !isReportReview;
+            if (isReportReview) {
+                reporterDeleteButton.textContent = `${getDisplayName(report.reportedBy)} löschen`;
+                reportedDeleteButton.textContent = `${getDisplayName(report.reportedUser)} löschen`;
+            }
+            renderMessages();
+            showLatestMessage();
+        }
+
+        function openServerChat(serverId) {
+            if (!currentUserName) {
+                return;
+            }
+
+            const server = getServers().find((entry) => entry.id === serverId);
+            const canReviewReportedGroup = currentUserName === "123" && activeReport?.serverId === serverId;
+            if (!server || (!server.members.includes(currentUserName) && !canReviewReportedGroup)) {
+                return;
+            }
+
+            chatAttachment.value = "";
+            chatAttachmentStatus.textContent = "";
+            activeChatUser = "";
+            activeServer = serverId;
+            newChatPanel.hidden = true;
+            chatShell.classList.remove("chat-list-open");
+            activeReport = null;
+            markServerMessagesRead(serverId);
+            renderUsers();
+            updateChatComposerAccess();
+            chatTitle.textContent = getServerTitle(server);
+            reportChatButton.hidden = currentUserName === "123";
+            const reported = getStoredArray(STORAGE_KEYS.reports, []).some((report) =>
+                report.reportedBy === currentUserName && report.serverId === serverId);
+            reportChatButton.disabled = reported;
+            reportChatButton.textContent = reported ? "Chat gemeldet" : "Chat melden";
+            reporterDeleteButton.hidden = true;
+            reportedDeleteButton.hidden = true;
+            renderMessages();
+            showLatestMessage();
+        }
+
+        function updateChatComposerAccess() {
+            const canWrite = Boolean(activeChatUser || activeServer);
+            chatInput.disabled = !canWrite;
+            chatAttachment.disabled = !canWrite;
+            if (!canWrite) {
+                chatAttachment.value = "";
+                chatAttachmentStatus.textContent = "";
+            }
+            chatForm.querySelector("button[type=submit]").disabled = !canWrite;
+            chatInput.placeholder = canWrite
+                ? "Schreibe eine Nachricht... @username"
+                : "Öffne einen Chat, um eine Nachricht zu schreiben.";
+        }
+
+        function renderSearchResults() {
+            const query = userSearch.value.trim().toLowerCase();
+            const accounts = getStoredArray(STORAGE_KEYS.accounts, []).map((account) => account.username);
+            const deletedUsers = getStoredArray(STORAGE_KEYS.deletedUsers, []);
+            const users = [...new Set([...Object.keys(VALID_USERS), ...accounts, ...getStoredArray(STORAGE_KEYS.users, [])])]
+                .filter((user) => user !== currentUserName && !deletedUsers.includes(user) &&
+                    getDisplayName(user).toLowerCase().includes(query))
+                .slice(0, 10);
+            userSearchResults.innerHTML = "";
+
+            users.forEach((user) => {
+                const item = document.createElement("li");
+                item.className = "user-item";
+                item.textContent = getDisplayName(user);
+                item.addEventListener("click", () => openPersonalChat(user));
+                userSearchResults.appendChild(item);
+            });
+        }
+
+        function renderMessages() {
+            renderedMessageMediaUrls.forEach((url) => URL.revokeObjectURL(url));
+            renderedMessageMediaUrls.clear();
+            let messages = getStoredArray(STORAGE_KEYS.messages, []);
+            let messagesChanged = false;
+            messages.forEach((message) => {
+                if (!message.id) {
+                    message.id = createMessageId();
+                    messagesChanged = true;
+                }
+                if (!message.createdAt) {
+                    message.createdAt = Date.now();
+                    messagesChanged = true;
+                }
+                if (!message.chatType && !message.adminOnly) {
+                    message.chatType = message.recipient ? "private" : "global";
+                    messagesChanged = true;
+                }
+            });
+            if (messagesChanged) {
+                setStoredArray(STORAGE_KEYS.messages, messages);
+                renderUsers();
+            }
+            const isAdmin = currentUserName === "123";
+            chatMessages.innerHTML = "";
+
+            const visibleMessages = activeChatUser
+                ? messages.filter((message) => {
+                    if (currentUserName === "123" && activeReport && activeReport.reportedUser === activeChatUser) {
+                        const participants = [activeReport.reportedBy, activeReport.reportedUser];
+                        return message.adminOnly ||
+                            (message.chatType === "private" && participants.includes(message.user) && participants.includes(message.recipient)) ||
+                            (message.user === currentUserName && participants.includes(message.recipient));
+                    }
+                    return message.chatType === "private" &&
+                        ((message.user === currentUserName && message.recipient === activeChatUser) ||
+                        (message.user === activeChatUser && message.recipient === currentUserName));
+                })
+                : activeServer
+                    ? getServers().some((server) => server.id === activeServer &&
+                        (server.members.includes(currentUserName) ||
+                        (currentUserName === "123" && activeReport?.serverId === activeServer)))
+                        ? messages.filter((message) => message.chatType === "server" && message.serverId === activeServer)
+                        : []
+                    : [];
+
+            if (currentUserName && (activeChatUser || activeServer)) {
+                const rulesItem = document.createElement("div");
+                rulesItem.className = "message system-rules";
+
+                const rulesName = document.createElement("strong");
+                rulesName.textContent = "System";
+
+                const rulesText = document.createElement("div");
+                rulesText.textContent = "Chatregeln: Sei respektvoll. Teile keine privaten Daten. Kein Spam oder beleidigende Inhalte.\nInfo: Drücke auf einen Benutzernamen, um den persönlichen Chat zu öffnen.";
+
+                rulesItem.appendChild(rulesName);
+                rulesItem.appendChild(rulesText);
+                chatMessages.appendChild(rulesItem);
+            }
+
+            if (!activeChatUser && !activeServer) {
+                const emptyState = document.createElement("div");
+                emptyState.className = "chat-empty-state";
+                emptyState.textContent = "Wähle links einen Chat oder starte einen neuen Chat mit einem Account.";
+                chatMessages.appendChild(emptyState);
+            }
+
+            visibleMessages.forEach((message) => {
+                const item = document.createElement("div");
+                item.className = message.user === currentUserName ? "message me" : "message";
+                if (message.type === "presence") {
+                    item.classList.add("system-presence");
+                }
+                if (message.deleted) {
+                    item.classList.add("deleted");
+                }
+
+                const name = document.createElement("strong");
+                if (message.user !== "System") {
+                    const accountLink = document.createElement("button");
+                    accountLink.className = "chat-account-link";
+                    accountLink.type = "button";
+                    accountLink.textContent = getDisplayName(message.user);
+                    accountLink.addEventListener("click", () => openAccountProfile(message.user));
+                    name.appendChild(accountLink);
+                } else {
+                    name.textContent = "System";
+                }
+
+                const text = document.createElement("div");
+                if (message.deleted) {
+                    const deletedLabel = message.deletedBy === "admin"
+                        ? "Diese Nachricht wurde vom Admin gelöscht."
+                        : "Diese Nachricht wurde gelöscht.";
+                    text.textContent = deletedLabel;
+
+                    if (isAdmin) {
+                        const originalText = document.createElement("div");
+                        originalText.className = "deleted-original-text";
+                        originalText.textContent = "Original: ";
+                        renderMessageText(originalText, message.text);
+                        text.appendChild(originalText);
+                    }
+                } else {
+                    renderMessageText(text, message.text);
+                    if (message.attachment?.mediaId) {
+                        renderMessageAttachment(text, message.attachment);
+                    }
+                }
+
+                const time = document.createElement("small");
+                time.textContent = formatMessageTime(message);
+
+                item.appendChild(name);
+                item.appendChild(text);
+                item.appendChild(time);
+
+                const canDelete = message.user !== "System" &&
+                    (isAdmin || (!message.deleted && message.user === currentUserName));
+                if (canDelete) {
+                    const actions = document.createElement("div");
+                    actions.className = "message-actions";
+
+                    const deleteButton = document.createElement("button");
+                    deleteButton.className = "message-delete-button";
+                    deleteButton.type = "button";
+                    deleteButton.textContent = message.deleted ? "Endgültig löschen" : "Löschen";
+                    deleteButton.addEventListener("click", () => deleteMessage(message.id, message.deleted));
+                    actions.appendChild(deleteButton);
+                    item.appendChild(actions);
+                }
+
+                chatMessages.appendChild(item);
+            });
+
+            requestAnimationFrame(() => {
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            });
+        }
+
+        function returnToChatList() {
+            activeChatUser = "";
+            activeServer = "";
+            activeReport = null;
+            chatTitle.textContent = "Deine Chats";
+            reportChatButton.hidden = true;
+            reporterDeleteButton.hidden = true;
+            reportedDeleteButton.hidden = true;
+            chatShell.classList.add("chat-list-open");
+            updateChatComposerAccess();
+            renderMessages();
+        }
+
+        function deleteMessage(messageId, permanently) {
+            const messages = getStoredArray(STORAGE_KEYS.messages, []);
+            const message = messages.find((entry) => entry.id === messageId);
+            if (!message) {
+                return;
+            }
+
+            if (permanently && currentUserName !== "123") {
+                return;
+            }
+
+            if (permanently) {
+                setStoredArray(STORAGE_KEYS.messages, messages.filter((entry) => entry.id !== messageId));
+            } else {
+                message.deleted = true;
+                message.deletedBy = currentUserName === "123" ? "admin" : "user";
+                setStoredArray(STORAGE_KEYS.messages, messages);
+            }
+            renderMessages();
+            renderUsers();
+            renderServers();
+        }
+
+        function markPrivateMessagesRead(user) {
+            const messages = getStoredArray(STORAGE_KEYS.messages, []);
+            const readMessages = getStoredArray(getReadMessagesKey(), []);
+            const messageIds = messages
+                .filter((message) => message.chatType === "private" &&
+                    ((message.user === user && message.recipient === currentUserName) ||
+                    (message.user === currentUserName && message.recipient === user)))
+                .map((message) => message.id);
+            setStoredArray(getReadMessagesKey(), [...new Set([...readMessages, ...messageIds])]);
+        }
+
+        function markServerMessagesRead(serverId) {
+            const messages = getStoredArray(STORAGE_KEYS.messages, []);
+            const readMessages = getStoredArray(getReadServerMessagesKey(), []);
+            const messageIds = messages
+                .filter((message) => message.chatType === "server" && message.serverId === serverId)
+                .map((message) => message.id);
+            setStoredArray(getReadServerMessagesKey(), [...new Set([...readMessages, ...messageIds])]);
+        }
+
+        function renderReportedChats() {
+            const reports = getStoredArray(STORAGE_KEYS.reports, []);
+            reportedChats.innerHTML = "";
+
+            reports.forEach((report) => {
+                const item = document.createElement("li");
+                item.className = "report-item";
+                const reportedServer = report.serverId
+                    ? getServers().find((server) => server.id === report.serverId)
+                    : null;
+                item.textContent = reportedServer
+                    ? `${reportedServer.name} gemeldet von ${getDisplayName(report.reportedBy)}`
+                    : `${getDisplayName(report.reportedUser)} gemeldet von ${getDisplayName(report.reportedBy)}`;
+
+                const showButton = document.createElement("button");
+                showButton.type = "button";
+                showButton.textContent = "Anzeigen";
+                showButton.addEventListener("click", () => {
+                    const reports = getStoredArray(STORAGE_KEYS.reports, []);
+                    setStoredArray(STORAGE_KEYS.reports, reports.filter((entry) =>
+                        !(entry.reportedBy === report.reportedBy &&
+                            (report.serverId ? entry.serverId === report.serverId : entry.reportedUser === report.reportedUser))));
+                    if (report.serverId) {
+                        activeReport = report;
+                        openServerChat(report.serverId);
+                    } else {
+                        activeReport = report;
+                        openPersonalChat(report.reportedUser, report);
+                    }
+                    renderReportedChats();
+                });
+                item.appendChild(showButton);
+                reportedChats.appendChild(item);
+            });
+        }
+
+        function reportCurrentChat() {
+            if ((!activeChatUser && !activeServer) || currentUserName === "123") {
+                return;
+            }
+
+            const reports = getStoredArray(STORAGE_KEYS.reports, []);
+            const alreadyReported = reports.some((report) =>
+                report.reportedBy === currentUserName &&
+                (activeServer ? report.serverId === activeServer : report.reportedUser === activeChatUser));
+            if (!alreadyReported) {
+                reports.push({
+                    reportedBy: currentUserName,
+                    reportedUser: activeChatUser || null,
+                    serverId: activeServer || null,
+                    createdAt: Date.now()
+                });
+                setStoredArray(STORAGE_KEYS.reports, reports);
+            }
+            reportChatButton.textContent = "Chat gemeldet";
+            reportChatButton.disabled = true;
+            renderReportedChats();
+        }
+
+        function showServerCreatePanel() {
+            serverCreatePanel.hidden = false;
+            serverCreateMessage.textContent = "";
+            serverNameInput.focus();
+        }
+
+        function hideServerCreatePanel() {
+            serverCreatePanel.hidden = true;
+            serverCreateForm.reset();
+            serverCreateMessage.textContent = "";
+        }
+
+        function showLatestMessage() {
+            requestAnimationFrame(() => {
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            });
+        }
+
+        function renderMessageText(container, messageText) {
+            const mentionPattern = /@[A-Za-z0-9._-]+/g;
+            let lastIndex = 0;
+            let match;
+
+            while ((match = mentionPattern.exec(messageText)) !== null) {
+                container.appendChild(document.createTextNode(messageText.slice(lastIndex, match.index)));
+
+                const mention = document.createElement("span");
+                mention.className = "mention";
+                mention.textContent = match[0];
+                container.appendChild(mention);
+                lastIndex = mentionPattern.lastIndex;
+            }
+
+            container.appendChild(document.createTextNode(messageText.slice(lastIndex)));
+        }
+
+        async function renderMessageAttachment(container, attachment) {
+            const wrapper = document.createElement("div");
+            wrapper.className = "message-attachment";
+            wrapper.textContent = "Datei wird geladen...";
+            container.appendChild(wrapper);
+
+            try {
+                const file = await getSocialMedia(attachment.mediaId);
+                if (!file) {
+                    throw new Error("Die Datei ist nicht mehr verfügbar.");
+                }
+                if (!wrapper.isConnected) {
+                    return;
+                }
+
+                const objectUrl = URL.createObjectURL(file);
+                renderedMessageMediaUrls.add(objectUrl);
+                wrapper.textContent = "";
+                const contentType = attachment.type || file.type || "";
+                const fileName = attachment.name || "Datei";
+                const extension = fileName.toLowerCase().split(".").pop();
+
+                if (contentType.startsWith("image/") ||
+                    ["jpg", "jpeg", "png", "gif", "webp", "svg", "avif"].includes(extension)) {
+                    const image = document.createElement("img");
+                    image.src = objectUrl;
+                    image.alt = fileName;
+                    wrapper.appendChild(image);
+                } else if (contentType.startsWith("video/") ||
+                    ["mp4", "webm", "ogv", "mov", "m4v"].includes(extension)) {
+                    const video = document.createElement("video");
+                    video.src = objectUrl;
+                    video.controls = true;
+                    video.playsInline = true;
+                    video.preload = "metadata";
+                    wrapper.appendChild(video);
+                } else {
+                    const link = document.createElement("a");
+                    link.href = objectUrl;
+                    link.download = fileName;
+                    link.textContent = `📎 ${fileName} (${formatFileSize(file.size)})`;
+                    wrapper.appendChild(link);
+                }
+            } catch (error) {
+                if (wrapper.isConnected) {
+                    wrapper.textContent = `Datei konnte nicht geladen werden: ${error.message}`;
+                }
+            }
+        }
+
+        function formatFileSize(size) {
+            if (size < 1024) {
+                return `${size} B`;
+            }
+            if (size < 1024 * 1024) {
+                return `${(size / 1024).toFixed(1)} KB`;
+            }
+            return `${(size / (1024 * 1024)).toFixed(1)} MB`;
+        }
+
+        function formatMessageTime(message) {
+            if (!activeChatUser || !message.createdAt) {
+                return message.time;
+            }
+
+            const messageDate = new Date(message.createdAt);
+            const yesterday = new Date();
+            yesterday.setHours(0, 0, 0, 0);
+            yesterday.setDate(yesterday.getDate() - 1);
+
+            if (messageDate >= yesterday) {
+                return messageDate.toLocaleString("de-DE", {
+                    day: "2-digit",
+                    month: "2-digit",
+                    year: "numeric",
+                    hour: "2-digit",
+                    minute: "2-digit"
+                });
+            }
+
+            return message.time;
+        }
+
+        function addUser(name) {
+            const cleanName = name.trim();
+            if (!cleanName) {
+                return;
+            }
+
+            const users = getStoredArray(STORAGE_KEYS.users, []);
+            if (!users.includes(cleanName)) {
+                users.push(cleanName);
+                setStoredArray(STORAGE_KEYS.users, users);
+            }
+        }
+
+        function removeUser(name) {
+            const cleanName = name.trim();
+            if (!cleanName) {
+                return;
+            }
+
+            const users = getStoredArray(STORAGE_KEYS.users, []);
+            const filteredUsers = users.filter((user) => user !== cleanName);
+            setStoredArray(STORAGE_KEYS.users, filteredUsers);
+            renderUsers();
+        }
+
+        function deleteServer(serverId) {
+            const servers = getServers();
+            const server = servers.find((entry) => entry.id === serverId);
+            if (!server || (currentUserName !== "123" && server.owner !== currentUserName)) {
+                return;
+            }
+
+            setStoredArray(STORAGE_KEYS.servers, servers.filter((entry) => entry.id !== serverId));
+            const messages = getStoredArray(STORAGE_KEYS.messages, []);
+            setStoredArray(STORAGE_KEYS.messages, messages.filter((message) => message.serverId !== serverId));
+            const reports = getStoredArray(STORAGE_KEYS.reports, []);
+            setStoredArray(STORAGE_KEYS.reports, reports.filter((report) => report.serverId !== serverId));
+
+            if (activeServer === serverId) {
+                returnToChatList();
+            }
+            renderServers();
+            renderReportedChats();
+        }
+
+        async function hashString(value) {
+            const encoded = new TextEncoder().encode(value);
+            const hashBuffer = await crypto.subtle.digest("SHA-256", encoded);
+            const hashArray = Array.from(new Uint8Array(hashBuffer));
+            return hashArray.map(byte => byte.toString(16).padStart(2, "0")).join("");
+        }
+
+        loginForm.addEventListener("submit", async (event) => {
+            event.preventDefault();
+
+            const userName = document.querySelector("#user-name").value.trim();
+            const pin = document.querySelector("#pin").value.trim();
+
+            if (!loginForm.checkValidity()) {
+                loginForm.reportValidity();
+                return;
+            }
+
+            const enteredUsernameHash = await hashString(userName);
+            const enteredPinHash = await hashString(pin);
+
+            const validUser = VALID_USERS[userName];
+            const registeredAccount = getStoredArray(STORAGE_KEYS.accounts, [])
+                .find((account) => account.username === userName);
+            const validLegacyLogin = validUser &&
+                enteredUsernameHash === validUser.usernameHash &&
+                enteredPinHash === validUser.pinHash;
+            const validRegisteredLogin = registeredAccount &&
+                enteredUsernameHash === registeredAccount.usernameHash &&
+                enteredPinHash === registeredAccount.pinHash;
+            const deletedUsers = getStoredArray(STORAGE_KEYS.deletedUsers, []);
+
+            if (deletedUsers.includes(userName) || (!validLegacyLogin && !validRegisteredLogin)) {
+                loginMessage.textContent = "Benutzername oder PIN sind falsch.";
+                return;
+            }
+
+            currentUserName = userName;
+            activeChatUser = "";
+            activeServer = "";
+            chatShell.classList.add("chat-list-open");
+            switchSocialPage("chats");
+            returnToChatList();
+            clearMessagesButton.hidden = currentUserName !== "123";
+            reportsSidebar.hidden = currentUserName !== "123";
+            renderReportedChats();
+            addUser(userName);
+            welcomeUser.textContent = `Hallo ${getDisplayName(currentUserName)}!`;
+            renderUsers();
+            renderServers();
+            renderSearchResults();
+            renderMessages();
+
+            loginContainer.hidden = true;
+            websiteContent.hidden = false;
+        });
+
+        logoutButton.addEventListener("click", () => {
+            if (currentUserName) {
+                removeUser(currentUserName);
+            }
+
+            websiteContent.hidden = true;
+            loginContainer.hidden = false;
+            loginForm.reset();
+            loginMessage.textContent = "";
+            newChatPanel.hidden = true;
+            currentUserName = "";
+            activeChatUser = "";
+            activeServer = "";
+            chatShell.classList.add("chat-list-open");
+            switchSocialPage("chats");
+            returnToChatList();
+            clearMessagesButton.hidden = true;
+            reportsSidebar.hidden = true;
+            userSearch.value = "";
+            chatListSearch.value = "";
+            userSearch.value = "";
+            renderServers();
+            renderSearchResults();
+        });
+
+        window.addEventListener("pagehide", () => {
+            if (currentUserName) {
+                removeUser(currentUserName);
+            }
+        });
+
+        profileButton.addEventListener("click", () => {
+            profilePanel.hidden = !profilePanel.hidden;
+            if (!profilePanel.hidden) {
+                const isAdmin = currentUserName === "123";
+                profileName.value = getDisplayName(currentUserName);
+                profilePassword.value = "";
+                profileMessage.textContent = "";
+                profileName.disabled = isAdmin;
+                profilePassword.disabled = isAdmin;
+                profileSaveButton.disabled = isAdmin;
+                deleteAccountSection.hidden = !isAdmin;
+                deleteAccountMessage.textContent = "";
+                if (isAdmin) {
+                    selectedAccountToDelete = "";
+                    accountToDeleteSearch.value = "";
+                    renderAccountOptions();
+                }
+                if (isAdmin) {
+                    profileMessage.textContent = "Das Admin-Konto kann nicht geändert werden.";
+                }
+            }
+        });
+
+        profileCloseButton.addEventListener("click", () => {
+            profilePanel.hidden = true;
+        });
+
+        profileForm.addEventListener("submit", async (event) => {
+            event.preventDefault();
+
+            const oldName = currentUserName;
+            const newName = profileName.value.trim();
+            const newPassword = profilePassword.value;
+            const accounts = getStoredArray(STORAGE_KEYS.accounts, []);
+
+            if (oldName === "123") {
+                profileMessage.textContent = "Das Admin-Konto kann nicht geändert werden.";
+                return;
+            }
+
+            if (!profileForm.checkValidity()) {
+                profileForm.reportValidity();
+                return;
+            }
+
+            if (newName !== oldName && accountExists(newName)) {
+                profileMessage.textContent = "Dieser Benutzername ist bereits vergeben.";
+                return;
+            }
+
+            const accountIndex = accounts.findIndex((account) => account.username === oldName);
+            const updatedAccount = {
+                username: newName,
+                usernameHash: await hashString(newName),
+                pinHash: await hashString(newPassword)
+            };
+
+            if (accountIndex === -1) {
+                accounts.push(updatedAccount);
+            } else {
+                accounts[accountIndex] = updatedAccount;
+            }
+
+            setStoredArray(STORAGE_KEYS.accounts, accounts);
+            updateStoredUserName(oldName, newName);
+            currentUserName = newName;
+            welcomeUser.textContent = `Hallo ${getDisplayName(currentUserName)}!`;
+            renderUsers();
+            renderSearchResults();
+            renderServers();
+            renderMessages();
+            profileName.value = newName;
+            profilePassword.value = "";
+            profileMessage.style.color = "#176b87";
+            profileMessage.textContent = "Profil erfolgreich geändert.";
+        });
+
+        deleteAccountButton.addEventListener("click", () => {
+            if (currentUserName !== "123") {
+                return;
+            }
+
+            const userToDelete = selectedAccountToDelete;
+            if (!userToDelete || userToDelete === "123") {
+                return;
+            }
+
+            const deletedUsers = getStoredArray(STORAGE_KEYS.deletedUsers, []);
+            if (!deletedUsers.includes(userToDelete)) {
+                deletedUsers.push(userToDelete);
+            }
+            setStoredArray(STORAGE_KEYS.deletedUsers, deletedUsers);
+
+            const accounts = getStoredArray(STORAGE_KEYS.accounts, []);
+            setStoredArray(STORAGE_KEYS.accounts, accounts);
+
+            const users = getStoredArray(STORAGE_KEYS.users, []);
+            setStoredArray(STORAGE_KEYS.users, users.filter((user) => user !== userToDelete));
+
+            const messages = getStoredArray(STORAGE_KEYS.messages, []);
+            const remainingMessages = messages.filter((message) =>
+                message.user !== userToDelete && message.recipient !== userToDelete);
+            if (activeReport && (activeReport.reportedBy === userToDelete || activeReport.reportedUser === userToDelete)) {
+                remainingMessages.push({
+                    id: createMessageId(),
+                    user: "System",
+                    recipient: "__admin__",
+                    text: `${getDisplayName(userToDelete)} wurde gelöscht.`,
+                    time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+                    createdAt: Date.now(),
+                    adminOnly: true
+                });
+            }
+            setStoredArray(STORAGE_KEYS.messages, remainingMessages);
+
+            renderUsers();
+            renderSearchResults();
+            if (activeChatUser === userToDelete) {
+                returnToChatList();
+            } else {
+                renderMessages();
+            }
+            selectedAccountToDelete = "";
+            accountToDeleteSearch.value = "";
+            renderAccountOptions();
+            renderReportedChats();
+            deleteAccountMessage.style.color = "#176b87";
+            deleteAccountMessage.textContent = `${getDisplayName(userToDelete)} wurde gelöscht.`;
+        });
+
+        restoreAccountButton.addEventListener("click", async () => {
+            if (currentUserName !== "123" || !selectedAccountToDelete) {
+                return;
+            }
+
+            const userToRestore = selectedAccountToDelete;
+            const deletedUsers = getStoredArray(STORAGE_KEYS.deletedUsers, []);
+            setStoredArray(STORAGE_KEYS.deletedUsers, deletedUsers.filter((user) => user !== userToRestore));
+
+            const accounts = getStoredArray(STORAGE_KEYS.accounts, []);
+            if (!VALID_USERS[userToRestore] && !accounts.some((account) => account.username === userToRestore)) {
+                accounts.push({
+                    username: userToRestore,
+                    usernameHash: await hashString(userToRestore),
+                    pinHash: await hashString(userToRestore)
+                });
+                setStoredArray(STORAGE_KEYS.accounts, accounts);
+            }
+
+            renderAccountOptions();
+            deleteAccountMessage.style.color = "#176b87";
+            deleteAccountMessage.textContent = `${getDisplayName(userToRestore)} wurde wiederhergestellt.`;
+        });
+
+        createAccountButton.addEventListener("click", async () => {
+            if (currentUserName !== "123") {
+                return;
+            }
+
+            const newUserName = accountToDeleteSearch.value.trim();
+            if (!newUserName || newUserName === "123" || accountExists(newUserName)) {
+                deleteAccountMessage.style.color = "#b00020";
+                deleteAccountMessage.textContent = "Dieser Benutzername kann nicht erstellt werden.";
+                return;
+            }
+
+            const accounts = getStoredArray(STORAGE_KEYS.accounts, []);
+            accounts.push({
+                username: newUserName,
+                usernameHash: await hashString(newUserName),
+                pinHash: await hashString(newUserName),
+                adminCreated: true
+            });
+            setStoredArray(STORAGE_KEYS.accounts, accounts);
+
+            selectedAccountToDelete = "";
+            renderAccountOptions();
+            deleteAccountMessage.style.color = "#176b2c";
+            deleteAccountMessage.textContent = `${newUserName} wurde erstellt. Der Benutzername ist die Start-PIN.`;
+        });
+
+        accountToDeleteSearch.addEventListener("input", () => {
+            selectedAccountToDelete = "";
+            renderAccountOptions();
+        });
+
+        registerForm.addEventListener("submit", async (event) => {
+            event.preventDefault();
+
+            const registerName = document.querySelector("#register-name").value.trim();
+            const registerPassword = document.querySelector("#register-password").value.trim();
+
+            if (!registerForm.checkValidity()) {
+                registerForm.reportValidity();
+                return;
+            }
+
+            if (registerPassword !== "000") {
+                registerMessage.textContent = "Der Registrierungscode ist falsch.";
+                return;
+            }
+
+            if (accountExists(registerName)) {
+                registerMessage.textContent = "Dieser Benutzername ist bereits vergeben.";
+                return;
+            }
+
+            const accounts = getStoredArray(STORAGE_KEYS.accounts, []);
+            accounts.push({
+                username: registerName,
+                usernameHash: await hashString(registerName),
+                pinHash: await hashString(registerName)
+            });
+            setStoredArray(STORAGE_KEYS.accounts, accounts);
+
+            registerMessage.textContent = "Account erstellt. Du kannst dich jetzt mit deinem Benutzernamen als PIN anmelden.";
+            registerForm.reset();
+        });
+
+        showRegisterButton.addEventListener("click", () => {
+            loginForm.hidden = true;
+            showRegisterButton.hidden = true;
+            registerForm.hidden = false;
+        });
+
+        showLoginButton.addEventListener("click", () => {
+            registerForm.hidden = true;
+            loginForm.hidden = false;
+            showRegisterButton.hidden = false;
+            registerMessage.textContent = "";
+        });
+
+        addServerButton.addEventListener("click", showServerCreatePanel);
+
+        serverCreateCancel.addEventListener("click", hideServerCreatePanel);
+
+        chatListSearch.addEventListener("input", renderUsers);
+        newChatButton.addEventListener("click", () => {
+            newChatPanel.hidden = !newChatPanel.hidden;
+            if (!newChatPanel.hidden) {
+                userSearch.focus();
+            } else {
+                userSearch.value = "";
+                renderSearchResults();
+            }
+        });
+
+        serverCreateForm.addEventListener("submit", (event) => {
+            event.preventDefault();
+
+            const serverName = serverNameInput.value.trim();
+            const visibility = serverCreateForm.elements["server-visibility"].value;
+            const servers = getServers();
+            if (servers.some((server) => server.name.toLowerCase() === serverName.toLowerCase())) {
+                serverCreateMessage.textContent = "Dieser Gruppenname ist bereits vergeben.";
+                return;
+            }
+
+            const server = {
+                id: visibility === "private" ? createServerId() : `server-${Date.now()}`,
+                name: serverName,
+                visibility,
+                owner: currentUserName,
+                members: [currentUserName],
+                createdAt: Date.now()
+            };
+            servers.push(server);
+            setStoredArray(STORAGE_KEYS.servers, servers);
+            renderServers();
+
+            if (visibility === "private") {
+                serverCreateMessage.textContent = `Privat erstellt. Gruppen-ID: ${server.id}`;
+                serverCreateForm.reset();
+                serverNameInput.focus();
+                return;
+            }
+
+            hideServerCreatePanel();
+            openServerChat(server.id);
+        });
+
+        reportChatButton.addEventListener("click", reportCurrentChat);
+
+        reporterDeleteButton.addEventListener("click", () => {
+            if (activeReport && currentUserName === "123") {
+                selectedAccountToDelete = activeReport.reportedBy;
+                deleteAccountButton.click();
+            }
+        });
+
+        reportedDeleteButton.addEventListener("click", () => {
+            if (activeReport && currentUserName === "123") {
+                selectedAccountToDelete = activeReport.reportedUser;
+                deleteAccountButton.click();
+            }
+        });
+
+        clearMessagesButton.addEventListener("click", () => {
+            if (currentUserName !== "123") {
+                return;
+            }
+
+            setStoredArray(STORAGE_KEYS.messages, []);
+            renderUsers();
+            renderServers();
+            renderMessages();
+        });
+
+        userSearch.addEventListener("input", renderSearchResults);
+
+        socialNavigation.addEventListener("click", (event) => {
+            const button = event.target.closest("button[data-page]");
+            if (button) {
+                switchSocialPage(button.dataset.page);
+            }
+        });
+
+        chatBackButton.addEventListener("click", () => {
+            returnToChatList();
+        });
+
+        videoSearch.addEventListener("input", () => renderSocialFeed("videos"));
+        storySearch.addEventListener("input", () => renderSocialFeed("stories"));
+        accountBackButton.addEventListener("click", () => {
+            switchSocialPage(profileReturnPage);
+        });
+
+        descriptionForm.addEventListener("submit", (event) => {
+            event.preventDefault();
+            setUserDescription(currentUserName, descriptionInput.value.trim());
+            descriptionStatus.textContent = "Deine Beschreibung wurde gespeichert.";
+        });
+
+        videoForm.addEventListener("submit", async (event) => {
+            event.preventDefault();
+            const file = videoFile.files[0];
+            if (!file || !file.type.startsWith("video/")) {
+                videoStatus.textContent = "Bitte wähle eine gültige Videodatei aus.";
+                return;
+            }
+            if (file.size > 25 * 1024 * 1024) {
+                videoStatus.textContent = "Das Video ist zu groß. Die maximale Dateigröße beträgt 25 MB.";
+                return;
+            }
+
+            let mediaId = "";
+            try {
+                mediaId = await storeSocialMedia(file);
+                const posts = getStoredArray(STORAGE_KEYS.videos, []);
+                posts.push({
+                    id: createMessageId(),
+                    user: currentUserName,
+                    title: videoTitle.value.trim(),
+                    mediaId,
+                    createdAt: Date.now()
+                });
+                setStoredArray(STORAGE_KEYS.videos, posts);
+                videoForm.reset();
+                videoStatus.textContent = "Dein Video wurde gepostet.";
+                await renderSocialFeed("me");
+            } catch (error) {
+                if (mediaId) {
+                    try {
+                        await deleteSocialMedia(mediaId);
+                    } catch (cleanupError) {
+                        videoStatus.textContent = `Video konnte nicht gepostet werden: ${error.message} Die Datei konnte auch nicht aufgeräumt werden: ${cleanupError.message}`;
+                        return;
+                    }
+                }
+                videoStatus.textContent = `Video konnte nicht gepostet werden: ${error.message}`;
+            }
+        });
+
+        storyForm.addEventListener("submit", async (event) => {
+            event.preventDefault();
+            const file = storyImage.files[0];
+            if (file && !file.type.startsWith("image/")) {
+                storyStatus.textContent = "Bitte wähle eine gültige Bilddatei aus.";
+                return;
+            }
+            if (file && file.size > 5 * 1024 * 1024) {
+                storyStatus.textContent = "Das Bild ist zu groß. Die maximale Dateigröße beträgt 5 MB.";
+                return;
+            }
+
+            let mediaId = "";
+            try {
+                if (file) {
+                    mediaId = await storeSocialMedia(file);
+                }
+                const posts = getStoredArray(STORAGE_KEYS.stories, []);
+                posts.push({
+                    id: createMessageId(),
+                    user: currentUserName,
+                    text: storyText.value.trim(),
+                    mediaId,
+                    createdAt: Date.now()
+                });
+                setStoredArray(STORAGE_KEYS.stories, posts);
+                storyForm.reset();
+                storyStatus.textContent = "Deine Story wurde gepostet.";
+                await renderSocialFeed("me");
+            } catch (error) {
+                if (mediaId) {
+                    try {
+                        await deleteSocialMedia(mediaId);
+                    } catch (cleanupError) {
+                        storyStatus.textContent = `Story konnte nicht gepostet werden: ${error.message} Die Datei konnte auch nicht aufgeräumt werden: ${cleanupError.message}`;
+                        return;
+                    }
+                }
+                storyStatus.textContent = `Story konnte nicht gepostet werden: ${error.message}`;
+            }
+        });
+
+        window.addEventListener("storage", (event) => {
+            if (!currentUserName) {
+                return;
+            }
+            if (event.key === STORAGE_KEYS.messages) {
+                if (activeChatUser) {
+                    markPrivateMessagesRead(activeChatUser);
+                } else if (activeServer) {
+                    markServerMessagesRead(activeServer);
+                }
+                renderUsers();
+                renderServers();
+                renderMessages();
+            } else if (event.key === STORAGE_KEYS.users || event.key === STORAGE_KEYS.accounts) {
+                renderUsers();
+                renderSearchResults();
+            } else if (event.key === STORAGE_KEYS.servers) {
+                renderServers();
+            } else if (event.key === STORAGE_KEYS.videos || event.key === STORAGE_KEYS.stories) {
+                if (["videos", "stories", "subscriptions", "me", "account"].includes(currentSocialPage)) {
+                    renderSocialFeed(currentSocialPage);
+                }
+            } else if (event.key === STORAGE_KEYS.profiles) {
+                if (currentSocialPage === "account") {
+                    renderAccountProfile();
+                }
+            } else if (event.key?.startsWith("chatSubscriptions:") &&
+                (event.key === `chatSubscriptions:${currentUserName}` ||
+                currentSocialPage === "subscriptions")) {
+                renderSubscriptionsFilter();
+                if (currentSocialPage === "subscriptions") {
+                    renderSocialFeed("subscriptions");
+                } else if (currentSocialPage === "account") {
+                    renderAccountProfile();
+                }
+            }
+        });
+
+        chatAttachment.addEventListener("change", () => {
+            const file = chatAttachment.files[0];
+            chatAttachmentStatus.textContent = file
+                ? `${file.name} (${formatFileSize(file.size)})`
+                : "";
+        });
+
+        chatForm.addEventListener("submit", async (event) => {
+            event.preventDefault();
+
+            if (!activeChatUser && !activeServer) {
+                return;
+            }
+
+            if (activeServer) {
+                const server = getServers().find((entry) => entry.id === activeServer);
+                if (!server || !server.members.includes(currentUserName)) {
+                    returnToChatList();
+                    return;
+                }
+            }
+
+            const messageText = chatInput.value.trim();
+            const file = chatAttachment.files[0] || null;
+            if (!messageText && !file) {
+                return;
+            }
+
+            if (file) {
+                const supportedExtension = /\.(pdf|doc|docx|txt|odt|xls|xlsx|ppt|pptx)$/i.test(file.name);
+                if (!file.type.startsWith("image/") && !file.type.startsWith("video/") &&
+                    !supportedExtension) {
+                    chatAttachmentStatus.textContent = "Bitte wähle ein Bild, Video oder unterstütztes Dokument aus.";
+                    return;
+                }
+                if (file.size > 25 * 1024 * 1024) {
+                    chatAttachmentStatus.textContent = "Dateien dürfen höchstens 25 MB groß sein.";
+                    return;
+                }
+            }
+
+            const recipient = activeChatUser;
+            const serverId = activeServer;
+            const submitButton = chatForm.querySelector("button[type=submit]");
+            submitButton.disabled = true;
+            chatAttachmentStatus.textContent = file ? "Datei wird gesendet..." : "";
+            let mediaId = "";
+            try {
+                if (file) {
+                    mediaId = await storeSocialMedia(file);
+                }
+                const messages = getStoredArray(STORAGE_KEYS.messages, []);
+                messages.push({
+                    id: createMessageId(),
+                    user: currentUserName,
+                    recipient: recipient || null,
+                    serverId: serverId || null,
+                    chatType: recipient ? "private" : "server",
+                    text: messageText,
+                    attachment: file ? {
+                        mediaId,
+                        name: file.name,
+                        type: file.type,
+                        size: file.size
+                    } : null,
+                    time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+                    createdAt: Date.now()
+                });
+
+                setStoredArray(STORAGE_KEYS.messages, messages);
+            } catch (error) {
+                submitButton.disabled = !activeChatUser && !activeServer;
+                let cleanupMessage = "";
+                if (mediaId) {
+                    try {
+                        await deleteSocialMedia(mediaId);
+                    } catch (cleanupError) {
+                        cleanupMessage = ` Die Datei konnte auch nicht aufgeräumt werden: ${cleanupError.message}`;
+                    }
+                }
+                chatAttachmentStatus.textContent =
+                    `Nachricht konnte nicht gesendet werden: ${error.message}${cleanupMessage}`;
+                return;
+            }
+
+            chatInput.value = "";
+            chatAttachment.value = "";
+            chatAttachmentStatus.textContent = "";
+            submitButton.disabled = !activeChatUser && !activeServer;
+            renderUsers();
+            renderServers();
+            renderMessages();
+            showLatestMessage();
+        });
+
+        renderUsers();
+        renderServers();
+        renderSearchResults();
+        updateChatComposerAccess();
+        renderMessages();
+        setInterval(renderUsers, 60 * 1000);
+    </script>
+
+
+    <script type="module">
+        
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/13.3.0/firebase-app.js";
+        
+        const firebaseConfig = {
+            apiKey: "AIzaSyAkd8E37mQ4bftaaXubzKIq8XMuhVHNuJ0",
+            authDomain: "mychat-c9068.firebaseapp.com",
+            projectId: "mychat-c9068",
+            storageBucket: "mychat-c9068.firebasestorage.app",
+            messagingSenderId: "733607932310",
+            appId: "1:733607932310:web:f7fd38b9729e932446edb7"
+        }; 
+        const app = initializeApp(firebaseConfig);
+    </script>
+</body>
+
+</html>
